@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="fav-gold-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <linearGradient id="fav-light-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+
+    <linearGradient id="fav-map-saffron" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9233" />
+      <stop offset="50%" stop-color="#FF6B00" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+
+    <linearGradient id="fav-info-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(16, 16)">
+    <!-- Base Squircle -->
+    <rect x="8" y="8" width="464" height="464" rx="112" ry="112" fill="url(#fav-gold-border)" />
+    <rect x="16" y="16" width="448" height="448" rx="104" ry="104" fill="#FFFFFF" />
+    <rect x="24" y="24" width="432" height="432" rx="96" ry="96" fill="url(#fav-light-bg)" stroke="#E2E8F0" stroke-width="2" />
+
+    <!-- Open Book Knowledge Foundation -->
+    <path d="M 80,390 C 130,370 190,370 232,382 L 232,420 C 190,410 130,410 80,430 Z" fill="#FF7A00" />
+    <path d="M 400,390 C 350,370 290,370 248,382 L 248,420 C 290,410 350,410 400,430 Z" fill="#10B981" />
+    <rect x="236" y="375" width="8" height="50" rx="4" fill="#F59E0B" />
+
+    <!-- Maharashtra Map Silhouette -->
+    <path d="M 152,148 L 228,102 L 334,106 L 384,152 L 412,212 L 358,268 L 370,326 L 316,368 L 254,348 L 204,372 L 164,352 L 154,298 L 126,270 L 116,212 Z"
+          fill="url(#fav-map-saffron)" stroke="#FFFFFF" stroke-width="6" stroke-linejoin="round" />
+
+    <!-- Center Information "i" Symbol -->
+    <circle cx="240" cy="180" r="24" fill="url(#fav-info-gold)" stroke="#0F172A" stroke-width="5" />
+    <path d="M 224,220 L 256,220 L 256,228 L 248,228 L 248,280 L 256,280 L 256,288 L 224,288 L 224,280 L 232,280 L 232,228 L 224,228 Z" 
+          fill="url(#fav-info-gold)" stroke="#0F172A" stroke-width="5" />
+  </g>
+</svg>

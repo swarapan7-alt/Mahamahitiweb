@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+:root {
+  --bg-main: #F3F2FA;
+  --bg-section-farmer: #EEF7F3;
+  --bg-section-women: #F8F1F5;
+  --bg-section-edu: #F1F5FB;
+  --bg-section-soft: #F5F2FA;
+  --surface-card: #FFFFFF;
+
+  /* Category 1: Farmer (शेतकरी) */
+  --farmer-primary: #16834B;
+  --farmer-bg: #EAF7EF;
+  --farmer-dark: #12643A;
+  --farmer-border: #BBF7D0;
+
+  /* Category 2: Education (शिक्षण) */
+  --edu-primary: #4056B5;
+  --edu-bg: #EEF1FF;
+  --edu-dark: #30428D;
+  --edu-border: #C7D2FE;
+
+  /* Category 3: Women (महिला) */
+  --women-primary: #C23B68;
+  --women-bg: #FFF0F5;
+  --women-dark: #962B4E;
+  --women-border: #FECDD3;
+
+  /* Category 4: Health (आरोग्य) */
+  --health-primary: #148A83;
+  --health-bg: #EAF8F6;
+  --health-dark: #106B65;
+  --health-border: #99F6E4;
+
+  /* Category 5: Senior Citizen (ज्येष्ठ नागरिक) */
+  --senior-primary: #C47A16;
+  --senior-bg: #FFF5E5;
+  --senior-dark: #955B0D;
+  --senior-border: #FED7AA;
+
+  /* General Website Colors */
+  --text-primary: #172033;
+  --text-secondary: #46505F;
+  --text-muted: #6B7280;
+  --primary-accent: #5B45B5;
+  --ticker-red: #C62828;
+
+  --border-light: #E8E5F2;
+  --border-subtle: #DCD8EC;
+}
+
+@layer base {
+  body {
+    font-family: 'Noto Sans Devanagari', 'Mukta', 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-main);
+    letter-spacing: -0.01em;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Noto Sans Devanagari', 'Mukta', 'Manrope', sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}
+
+/* Floating animation for hero and badge pills */
+@keyframes soft-float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes soft-float-alt {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float-slow {
+  animation: soft-float-slow 4s ease-in-out infinite;
+}
+
+.animate-float-alt {
+  animation: soft-float-alt 3.5s ease-in-out infinite 0.5s;
+}
+
+/* Right-to-Left Marquee Ticker Animation */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee 85s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom premium light scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F1FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4BEDB;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9D94C4;
+}
+
+/* Premium Light Shadows & Surfaces */
+.soft-card-shadow {
+  box-shadow: 0 4px 20px rgba(91, 69, 198, 0.05), 0 1px 3px rgba(23, 32, 51, 0.03);
+}
+
+.soft-hover-shadow:hover {
+  box-shadow: 0 14px 34px rgba(91, 69, 198, 0.12), 0 2px 8px rgba(23, 32, 51, 0.04);
+}
+
+.floating-card-shadow {
+  box-shadow: 0 16px 36px rgba(91, 69, 198, 0.09), 0 2px 6px rgba(23, 32, 51, 0.03);
+}
+
+/* Print Styles for Checklist */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  header, footer, nav, .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .printable-checklist {
+    box-shadow: none !important;
+    border: 1px solid #999 !important;
+    margin: 0 !important;
+    padding: 15px !important;
+    width: 100% !important;
+  }
+}
+

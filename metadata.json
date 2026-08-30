@@ -1,0 +1,6 @@
+{
+  "name": "MahaMahiti.com",
+  "description": "स्वतंत्र नागरिक माहिती व्यासपीठ - सरकारी योजना, कागदपत्रे, प्रमाणपत्रे, शासकीय सेवा आणि मार्गदर्शनाची सोप्या भाषेतील अचूक माहिती.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

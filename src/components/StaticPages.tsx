@@ -1,0 +1,10 @@
+export { AboutPage } from './pages/AboutPage';
+export { ContactPage } from './pages/ContactPage';
+export { DisclaimerPage } from './pages/DisclaimerPage';
+export { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+export { TermsPage } from './pages/TermsPage';
+export { EditorialPolicyPage } from './pages/EditorialPolicyPage';
+export { SourcePolicyPage } from './pages/SourcePolicyPage';
+export { FAQPage } from './pages/FAQPage';
+export { FavoritesPage } from './pages/FavoritesPage';
+export { NotFoundPage } from './pages/NotFoundPage';

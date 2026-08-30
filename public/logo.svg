@@ -1,0 +1,242 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+  <defs>
+    <!-- Subtle 3D Elevation Filters -->
+    <filter id="logo-drop-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.15" />
+    </filter>
+
+    <filter id="map-depth" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#7C2D12" flood-opacity="0.32" />
+    </filter>
+
+    <filter id="info-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+
+    <!-- Premium Gold Bevel Border -->
+    <linearGradient id="bevel-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="25%" stop-color="#F59E0B" />
+      <stop offset="60%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#92400E" />
+    </linearGradient>
+
+    <!-- Clean White Light Canvas Gradient -->
+    <linearGradient id="canvas-light" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#EEF2F6" />
+    </linearGradient>
+
+    <!-- Maharashtra Map Saffron Gradient -->
+    <linearGradient id="map-saffron-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFA133" />
+      <stop offset="30%" stop-color="#FF6E00" />
+      <stop offset="80%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#C2410C" />
+    </linearGradient>
+
+    <!-- Open Book Tricolor Gradients -->
+    <linearGradient id="book-saffron" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF851A" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+
+    <linearGradient id="book-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+
+    <!-- Top/Bottom Tricolor Arcs -->
+    <linearGradient id="top-saffron-arc" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF7A00" />
+      <stop offset="100%" stop-color="#FFA34D" />
+    </linearGradient>
+
+    <linearGradient id="bottom-green-arc" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Information "i" Symbol Gradient -->
+    <linearGradient id="info-white-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFBEB" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(16, 16)">
+    <!-- 1. Outer Rounded-Square (Squircle) Frame with Gold Bevel (480x480) -->
+    <rect 
+      x="6" 
+      y="6" 
+      width="468" 
+      height="468" 
+      rx="110" 
+      ry="110" 
+      fill="url(#bevel-gold)" 
+      filter="url(#logo-drop-shadow)" 
+    />
+
+    <!-- 2. Inner White Bevel Rim -->
+    <rect 
+      x="13" 
+      y="13" 
+      width="454" 
+      height="454" 
+      rx="103" 
+      ry="103" 
+      fill="#FFFFFF" 
+    />
+
+    <!-- 3. Clean White Light Canvas Body -->
+    <rect 
+      x="20" 
+      y="20" 
+      width="440" 
+      height="440" 
+      rx="96" 
+      ry="96" 
+      fill="url(#canvas-light)" 
+      stroke="#E2E8F0" 
+      stroke-width="2" 
+    />
+
+    <!-- 4. Subtle Tricolor Top & Bottom Framing Accents -->
+    <path 
+      d="M 120,40 C 180,28 300,28 360,40 C 340,50 140,50 120,40 Z" 
+      fill="url(#top-saffron-arc)" 
+    />
+    <path 
+      d="M 120,440 C 180,452 300,452 360,440 C 340,430 140,430 120,440 Z" 
+      fill="url(#bottom-green-arc)" 
+    />
+
+    <!-- 5. OPEN BOOK / KNOWLEDGE FOUNDATION -->
+    <g transform="translate(240, 366)" filter="url(#map-depth)">
+      <!-- Left Page (Saffron Knowledge) -->
+      <path 
+        d="M -6,-4 C -45,-16 -115,-18 -165,-4 C -167,20 -165,38 -158,48 C -108,34 -45,36 -6,46 Z" 
+        fill="url(#book-saffron)" 
+        stroke="#C2410C" 
+        stroke-width="2.5" 
+      />
+      <path d="M -28,8 C -64,0 -112,0 -142,10" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+      <path d="M -28,24 C -64,16 -112,16 -142,26" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+
+      <!-- Right Page (Green Growth & Prosperity) -->
+      <path 
+        d="M 6,-4 C 45,-16 115,-18 165,-4 C 167,20 165,38 158,48 C 108,34 45,36 6,46 Z" 
+        fill="url(#book-green)" 
+        stroke="#047857" 
+        stroke-width="2.5" 
+      />
+      <path d="M 28,8 C 64,0 112,0 142,10" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+      <path d="M 28,24 C 64,16 112,16 142,26" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+
+      <!-- Center Book Spine -->
+      <path d="M -6,-6 L 0,-12 L 6,-6 L 6,48 L 0,52 L -6,48 Z" fill="#F59E0B" stroke="#B45309" stroke-width="2" />
+      <line x1="0" y1="-10" x2="0" y2="50" stroke="#FFFFFF" stroke-width="3" />
+    </g>
+
+    <!-- 6. MAHARASHTRA STATE MAP SILHOUETTE -->
+    <g transform="translate(0, -12)" filter="url(#map-depth)">
+      <path 
+        d="M 180,140 
+           L 275,130 
+           L 355,145 
+           L 405,158 
+           L 400,225 
+           L 405,280 
+           L 355,330 
+           L 320,340 
+           L 255,360 
+           L 200,370 
+           L 170,365 
+           L 160,305 
+           L 135,250 
+           L 140,195 
+           L 165,168 
+           Z"
+        fill="#7C2D12" 
+        transform="translate(0, 7)" 
+      />
+
+      <path 
+        d="M 180,140 
+           L 275,130 
+           L 355,145 
+           L 405,158 
+           L 400,225 
+           L 405,280 
+           L 355,330 
+           L 320,340 
+           L 255,360 
+           L 200,370 
+           L 170,365 
+           L 160,305 
+           L 135,250 
+           L 140,195 
+           L 165,168 
+           Z"
+        fill="none" 
+        stroke="url(#bevel-gold)" 
+        stroke-width="9" 
+        stroke-linejoin="round" 
+      />
+
+      <path 
+        d="M 180,140 
+           L 275,130 
+           L 355,145 
+           L 405,158 
+           L 400,225 
+           L 405,280 
+           L 355,330 
+           L 320,340 
+           L 255,360 
+           L 200,370 
+           L 170,365 
+           L 160,305 
+           L 135,250 
+           L 140,195 
+           L 165,168 
+           Z"
+        fill="url(#map-saffron-grad)" 
+        stroke="#FFFFFF" 
+        stroke-width="3" 
+        stroke-linejoin="round" 
+      />
+
+      <path d="M 220,138 L 260,195 L 320,205 L 350,265 L 305,350" fill="none" stroke="#FFA756" stroke-width="2.5" opacity="0.45" />
+      <path d="M 145,215 L 230,235 L 240,335" fill="none" stroke="#C2410C" stroke-width="2.5" opacity="0.3" />
+    </g>
+
+    <!-- 7. CLEAN "i" INFORMATION BEACON -->
+    <g transform="translate(240, 222)" filter="url(#info-shadow)">
+      <circle cx="0" cy="-48" r="23" fill="#0F172A" />
+      <circle cx="0" cy="-48" r="21" fill="url(#info-white-gold)" stroke="#F59E0B" stroke-width="3" />
+      <circle cx="0" cy="-48" r="9" fill="#EA580C" />
+      <circle cx="0" cy="-48" r="3.5" fill="#FFFFFF" />
+
+      <path 
+        d="M -18,-12 L 18,-12 L 18,-2 L 10,-2 L 10,48 L 18,48 L 18,58 L -18,58 L -18,48 L -10,48 L -10,-2 L -18,-2 Z" 
+        fill="#0F172A" 
+      />
+      <path 
+        d="M -16,-10 L 16,-10 L 16,-4 L 8,-4 L 8,46 L 16,46 L 16,56 L -16,56 L -16,46 L -8,46 L -8,-4 L -16,-4 Z" 
+        fill="url(#info-white-gold)" 
+        stroke="#F59E0B" 
+        stroke-width="2.5" 
+      />
+      <line x1="0" y1="-2" x2="0" y2="44" stroke="#EA580C" stroke-width="4" stroke-linecap="round" />
+    </g>
+
+    <!-- 8. Four Corner Civic Gold Pins -->
+    <circle cx="64" cy="64" r="8" fill="url(#bevel-gold)" stroke="#FFFFFF" stroke-width="2" />
+    <circle cx="416" cy="64" r="8" fill="url(#bevel-gold)" stroke="#FFFFFF" stroke-width="2" />
+    <circle cx="64" cy="416" r="8" fill="url(#bevel-gold)" stroke="#FFFFFF" stroke-width="2" />
+    <circle cx="416" cy="416" r="8" fill="url(#bevel-gold)" stroke="#FFFFFF" stroke-width="2" />
+  </g>
+</svg>
