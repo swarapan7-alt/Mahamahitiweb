@@ -139,7 +139,7 @@ function verifyToken(token: string): boolean {
 // -------------------------------------------------------------
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json({ limit: '100mb' }));
   app.use(express.urlencoded({ limit: '100mb', extended: true }));
@@ -654,7 +654,7 @@ async function startServer() {
     });
   });
 
-  // Vite middleware for development
+  // Vite middleware for development, static files for production
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
