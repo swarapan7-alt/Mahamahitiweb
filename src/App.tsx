@@ -3,11 +3,8 @@ import {
   Header 
 } from './components/Header';
 import { 
-  Hero 
-} from './components/Hero';
-import { 
-  QuickActions 
-} from './components/QuickActions';
+  Homepage 
+} from './components/Homepage';
 import { 
   SchemeList 
 } from './components/SchemeList';
@@ -29,12 +26,6 @@ import {
 import { 
   UpdatesList 
 } from './components/UpdatesList';
-import { 
-  UpdatesTicker 
-} from './components/UpdatesTicker';
-import { 
-  VisitorCounter 
-} from './components/VisitorCounter';
 import { 
   Footer 
 } from './components/Footer';
@@ -63,7 +54,6 @@ import {
 } from './components/StaticPages';
 import { 
   AdSlotTop, 
-  AdSlotContent, 
   AdSlotBottom 
 } from './components/AdSlots';
 import { 
@@ -226,82 +216,19 @@ function AppContent() {
       {/* Main View Router */}
       <main className="flex-1 pb-16">
         {activeTab === 'home' && (
-          <>
-            {/* 2. FULL-WIDTH IMAGE HERO */}
-            <Hero
-              onSearch={handleHeroSearch}
-              onCheckEligibility={() => {
-                const el = document.getElementById('eligibility-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  setActiveTab('eligibility');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              }}
-              onViewDocuments={() => {
-                const el = document.getElementById('documents-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  setActiveTab('documents');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              }}
-              onSelectSuggestion={(sug) => {
-                handleHeroSearch(sug);
-              }}
-            />
-
-            {/* LATEST UPDATES RIGHT-TO-LEFT TICKER */}
-            <UpdatesTicker
-              onSelectUpdate={(item) => {
-                handleOpenDetailModal(item, 'scheme');
-              }}
-              onNavigateToUpdates={() => {
-                setActiveTab('updates');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-
-            {/* 3. OVERLAPPING CATEGORY ICONS (5 large icons) */}
-            <QuickActions onSelectCategory={handleSelectCategory} />
-
-            {/* 4. "नवीन आणि महत्त्वाच्या योजना" (3 IMAGE-BASED FEATURED SCHEMES) */}
-            <SchemeList
-              onOpenDetails={(scheme) => handleOpenDetailModal(scheme, 'scheme')}
-              searchFilter={searchFilter}
-            />
-
-            {/* 5. "शासकीय सेवा" (LIST-FIRST SERVICES) */}
-            <ServiceList
-              onOpenDetails={(srv) => handleOpenDetailModal(srv, 'service')}
-            />
-
-            {/* Content Ad Slot */}
-            <AdSlotContent />
-
-            {/* 6. "महत्त्वाची कागदपत्रे" (LIST-FIRST DOCUMENTS) */}
-            <DocumentList
-              onOpenDetails={(doc) => handleOpenDetailModal(doc, 'document')}
-            />
-
-            {/* 7. "माझ्यासाठी कोणत्या योजना?" (ELIGIBILITY CHECKER) */}
-            <div id="eligibility-section">
-              <EligibilityChecker
-                onSelectScheme={(scheme) => handleOpenDetailModal(scheme, 'scheme')}
-              />
-            </div>
-
-            {/* 8. CHECKLIST + WHATSAPP (DOCUMENT CHECKLIST BUILDER) */}
-            <DocumentChecklistBuilder />
-
-            {/* 9. "नवीन माहिती" (LATEST UPDATES) */}
-            <UpdatesList />
-
-            {/* 10. REAL-TIME PERSISTENT VISITOR COUNTER */}
-            <VisitorCounter />
-          </>
+          <Homepage
+            onNavigate={(tab, catFilter) => {
+              setActiveTab(tab);
+              if (catFilter) {
+                setSearchFilter(catFilter === 'all' ? '' : catFilter);
+              } else {
+                setSearchFilter('');
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenDetails={handleOpenDetailModal}
+            onSearch={handleHeroSearch}
+          />
         )}
 
         {activeTab === 'schemes' && (
@@ -443,7 +370,6 @@ function AppContent() {
       <AIAssistantModal
         isOpen={isAIOpen}
         onClose={() => setIsAIOpen(false)}
-        onSpeak={speakMarathi}
       />
 
       {/* WhatsApp Checklist & Share Modal */}

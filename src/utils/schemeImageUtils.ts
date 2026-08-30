@@ -1,19 +1,21 @@
 import { Scheme } from '../types';
 
 export const DEFAULT_CATEGORY_IMAGES = {
-  women: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
-  farmer: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80',
-  education: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
-  health: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
-  senior_citizen: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=1200&q=80',
-  other_services: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80'
+  hero: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1600&h=900&q=85',
+  women: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=675&q=80',
+  farmer: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&h=675&q=80',
+  education: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&h=675&q=80',
+  worker: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&h=675&q=80',
+  health: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&h=675&q=80',
+  senior_citizen: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=1200&h=675&q=80',
+  other_services: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&h=675&q=80'
 } as const;
 
 export type CategoryImageKey = keyof typeof DEFAULT_CATEGORY_IMAGES;
 
 /**
- * Normalizes any category string (Marathi or English) into one of the 6 canonical category keys:
- * 'women' | 'farmer' | 'education' | 'health' | 'senior_citizen' | 'other_services'
+ * Normalizes any category string (Marathi or English) into one of the 7 canonical category keys:
+ * 'women' | 'farmer' | 'education' | 'worker' | 'health' | 'senior_citizen' | 'other_services'
  */
 export function getNormalizedCategoryKey(category?: string): CategoryImageKey {
   if (!category) return 'other_services';
@@ -60,7 +62,20 @@ export function getNormalizedCategoryKey(category?: string): CategoryImageKey {
     return 'education';
   }
 
-  // 4. Health / आरोग्य
+  // 4. Worker / कामगार
+  if (
+    c.includes('worker') ||
+    c.includes('कामगार') ||
+    c.includes('बांधकाम') ||
+    c.includes('मजूर') ||
+    c.includes('bocw') ||
+    c.includes('श्रम') ||
+    c.includes('कारखाना')
+  ) {
+    return 'worker';
+  }
+
+  // 5. Health / आरोग्य
   if (
     c.includes('health') ||
     c.includes('आरोग्य') ||
@@ -73,7 +88,7 @@ export function getNormalizedCategoryKey(category?: string): CategoryImageKey {
     return 'health';
   }
 
-  // 5. Senior Citizen / ज्येष्ठ नागरिक
+  // 6. Senior Citizen / ज्येष्ठ नागरिक
   if (
     c.includes('senior') ||
     c.includes('ज्येष्ठ') ||
@@ -85,7 +100,7 @@ export function getNormalizedCategoryKey(category?: string): CategoryImageKey {
     return 'senior_citizen';
   }
 
-  // 6. Other services / इतर
+  // 7. Other services / इतर
   return 'other_services';
 }
 
@@ -119,6 +134,8 @@ export function getSchemeImage(
         return getImageByKey('category_farmer', getImageByKey('homepage_farmer', defaultUrl));
       case 'education':
         return getImageByKey('category_education', getImageByKey('homepage_education', defaultUrl));
+      case 'worker':
+        return getImageByKey('category_worker', getImageByKey('homepage_worker', defaultUrl));
       case 'health':
         return getImageByKey('category_health', getImageByKey('homepage_health', defaultUrl));
       case 'senior_citizen':

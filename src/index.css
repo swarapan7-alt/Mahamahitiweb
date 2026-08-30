@@ -111,13 +111,22 @@ body,
   animation: soft-float-alt 3.5s ease-in-out infinite 0.5s;
 }
 
-/* Right-to-Left Marquee Ticker Animation */
+/* Marquee Ticker Animations */
 @keyframes marquee {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
     transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-ltr {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -129,6 +138,17 @@ body,
 }
 
 .animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-ltr {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-ltr 70s linear infinite;
+}
+
+.animate-marquee-ltr:hover {
   animation-play-state: paused;
 }
 

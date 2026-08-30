@@ -83,6 +83,17 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme, onOpenDetails })
           accent: 'text-[#148A83]',
           tagBg: 'bg-[#EAF8F6] text-[#106B65] border-[#99F6E4]'
         };
+      case 'worker':
+      case 'कामगार':
+      case 'कामगारांसाठी योजना':
+        return {
+          badge: 'bg-[#FFF7ED] text-[#9A3412] border-[#FED7AA]',
+          borderHover: 'hover:border-[#EA580C]',
+          titleHover: 'group-hover:text-[#EA580C]',
+          btn: 'bg-[#EA580C] hover:bg-[#C2410C] text-white',
+          accent: 'text-[#EA580C]',
+          tagBg: 'bg-[#FFF7ED] text-[#9A3412] border-[#FED7AA]'
+        };
       case 'senior':
       case 'senior_citizen':
       case 'ज्येष्ठ नागरिक':

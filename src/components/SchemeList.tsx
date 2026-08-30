@@ -42,12 +42,19 @@ export const SchemeList: React.FC<SchemeListProps> = ({ onOpenDetails, searchFil
       return;
     }
     const norm = getNormalizedCategoryKey(searchFilter);
-    if (['farmer', 'women', 'education', 'health', 'senior_citizen'].includes(norm)) {
-      if (norm === 'farmer') setSelectedCategory('farmer');
-      else if (norm === 'women') setSelectedCategory('women');
-      else if (norm === 'education') setSelectedCategory('student');
-      else if (norm === 'health') setSelectedCategory('health');
-      else if (norm === 'senior_citizen') setSelectedCategory('senior');
+    const filterLower = searchFilter.toLowerCase().trim();
+
+    if (
+      ['farmer', 'women', 'education', 'health', 'senior_citizen', 'worker'].includes(norm) ||
+      ['farmer', 'agriculture', 'women', 'education', 'student', 'health', 'senior', 'senior_citizen', 'worker', 'disabled'].includes(filterLower)
+    ) {
+      if (norm === 'farmer' || filterLower === 'farmer' || filterLower === 'agriculture') setSelectedCategory('farmer');
+      else if (norm === 'women' || filterLower === 'women') setSelectedCategory('women');
+      else if (norm === 'education' || filterLower === 'education' || filterLower === 'student') setSelectedCategory('student');
+      else if (norm === 'worker' || filterLower === 'worker') setSelectedCategory('worker');
+      else if (norm === 'health' || filterLower === 'health') setSelectedCategory('health');
+      else if (norm === 'senior_citizen' || filterLower === 'senior' || filterLower === 'senior_citizen') setSelectedCategory('senior');
+      else if (filterLower === 'disabled') setSelectedCategory('disabled');
       setLocalSearch('');
     } else {
       setLocalSearch(searchFilter);
@@ -88,6 +95,7 @@ export const SchemeList: React.FC<SchemeListProps> = ({ onOpenDetails, searchFil
                               (selectedCategory === 'farmer' && (scheme.category === 'agriculture' || schemeNorm === 'farmer')) ||
                               (selectedCategory === 'student' && (scheme.category === 'education' || schemeNorm === 'education')) ||
                               (selectedCategory === 'education' && (scheme.category === 'student' || schemeNorm === 'education')) ||
+                              (selectedCategory === 'worker' && (scheme.category === 'worker' || schemeNorm === 'worker')) ||
                               (selectedCategory === 'senior' && (scheme.category === 'senior_citizen' || schemeNorm === 'senior_citizen'));
 
       const query = (localSearch || '').toLowerCase().trim();
@@ -131,6 +139,14 @@ export const SchemeList: React.FC<SchemeListProps> = ({ onOpenDetails, searchFil
           hoverBorder: 'hover:border-[#C23B68]',
           titleHover: 'group-hover:text-[#C23B68]',
           glow: 'hover:shadow-[0_16px_36px_rgba(194,59,104,0.14)]'
+        };
+      case 'worker':
+        return {
+          badge: 'bg-[#FFF7ED] text-[#9A3412] border-[#FED7AA]',
+          btn: 'bg-[#EA580C] hover:bg-[#C2410C] text-white',
+          hoverBorder: 'hover:border-[#EA580C]',
+          titleHover: 'group-hover:text-[#EA580C]',
+          glow: 'hover:shadow-[0_16px_36px_rgba(234,88,12,0.14)]'
         };
       case 'health':
         return {
