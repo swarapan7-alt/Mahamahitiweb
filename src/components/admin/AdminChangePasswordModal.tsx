@@ -104,7 +104,7 @@ export const AdminChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) =
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="उदा. Sangli@123"
+                placeholder="••••••••"
                 className="w-full pl-10 pr-3.5 py-2 bg-[#FAF9F5] focus:bg-white border border-[#DDD6FE] focus:border-[#5B45B8] rounded-xl text-sm outline-none transition"
               />
             </div>

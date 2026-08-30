@@ -39,15 +39,9 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
     }
   };
 
-  const handleFillDemo = () => {
-    setUsername('Admin');
-    setPassword('Sangli@123');
-    setError('');
-  };
-
   return (
     <div className="min-h-screen bg-[#FAF9F5] flex flex-col justify-between items-center px-4 py-8 sm:py-12 font-sans selection:bg-[#DDD6FE]">
-      {/* Top Bar / Brand header */}
+      {/* Top Bar / Navigation */}
       <div className="w-full max-w-md flex items-center justify-between">
         <button
           onClick={onBackToPublic}
@@ -68,19 +62,16 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
           
           {/* Brand Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5B45B8] text-white shadow-sm mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5B45B8] text-white shadow-sm mb-3.5">
               <Building2 className="w-6 h-6" />
             </div>
             
-            <div className="flex items-center justify-center gap-2">
-              <h1 className="text-2xl font-bold text-[#201A30] font-heading tracking-tight">
-                महा<span className="text-[#5B45B8]">माहिती</span>
-              </h1>
-            </div>
-            <p className="text-xs font-bold text-[#5B45B8] uppercase tracking-wider mt-1">
-              Admin Panel
-            </p>
-            <h2 className="text-base font-semibold text-[#464255] mt-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#201A30] font-sans">
+              <span className="text-[#201A30]">MahaMahiti.com</span>
+              <span className="text-[#6E6A82] font-semibold text-base sm:text-lg"> / Admin Panel</span>
+            </h1>
+            
+            <h2 className="text-sm font-semibold text-[#6E6A82] mt-2">
               Administrator Login
             </h2>
           </div>
@@ -167,26 +158,12 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
             </div>
           </form>
 
-          {/* Quick Credential Helper for Development */}
-          <div className="mt-6 pt-5 border-t border-[#EDEBF0] text-center">
-            <p className="text-[11px] text-[#6E6A82] mb-2">
-              प्रशासकीय क्रेडेंशियल्स:
-            </p>
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAF9F5] hover:bg-[#F6F3FF] border border-[#DDD6FE] text-[#5B45B8] text-xs font-semibold transition cursor-pointer"
-            >
-              <span>Auto-fill: <strong>Admin</strong> / <strong>Sangli@123</strong></span>
-            </button>
-          </div>
-
         </div>
       </div>
 
       {/* Footer copyright */}
       <div className="text-center text-xs text-[#9B98A6] mt-4">
-        © २०२६ महामाहिती • सर्व प्रशासकीय कृती सुरक्षित व नोंदवल्या जातात
+        © २०२६ MahaMahiti.com • सर्व प्रशासकीय कृती सुरक्षित व नोंदवल्या जातात
       </div>
     </div>
   );
