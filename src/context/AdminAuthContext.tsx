@@ -69,6 +69,11 @@ export interface AdminAuthContextType {
   
   saveImage: (image: ImageAsset) => Promise<void>;
   deleteImage: (id: string) => Promise<void>;
+  uploadImageSlot: (
+    slotId: string, 
+    imageDataOrFile: string | File, 
+    metadata?: { name?: string; altText?: string; recommendedSize?: string; usedIn?: string }
+  ) => Promise<{ success: boolean; url?: string; error?: string }>;
   
   saveHomepageConfig: (config: HomepageConfig) => Promise<void>;
   saveSettings: (settings: AdminSettings) => Promise<void>;
@@ -744,6 +749,124 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     await persistChanges({ customImages: updated });
   };
 
+  // Dedicated Persistent Image Upload & Replace Method
+  const uploadImageSlot = async (
+    slotId: string,
+    imageDataOrFile: string | File,
+    metadata?: { name?: string; altText?: string; recommendedSize?: string; usedIn?: string }
+  ): Promise<{ success: boolean; url?: string; error?: string }> => {
+    try {
+      let base64String = '';
+      if (imageDataOrFile instanceof File) {
+        base64String = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = (e) => reject(e);
+          reader.readAsDataURL(imageDataOrFile);
+        });
+      } else {
+        base64String = imageDataOrFile;
+      }
+
+      if (!base64String) {
+        return { success: false, error: 'इमेज डेटा उपलब्ध नाही.' };
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const res = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          slotId,
+          imageData: base64String,
+          name: metadata?.name,
+          altText: metadata?.altText,
+          recommendedSize: metadata?.recommendedSize,
+          usedIn: metadata?.usedIn
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.url) {
+        const newUrl = data.url;
+        const newAsset: ImageAsset = data.imageAsset || {
+          id: slotId,
+          name: metadata?.name || slotId,
+          url: newUrl,
+          altText: metadata?.altText || slotId,
+          usedIn: metadata?.usedIn || slotId,
+          fileSize: metadata?.recommendedSize || '16:9',
+          uploadedAt: new Date().toISOString().split('T')[0]
+        };
+
+        // 1. Update React state immediately with the permanent server URL
+        setImages(prev => {
+          const copy = [...prev];
+          const idx = copy.findIndex(img => img.id === slotId);
+          if (idx >= 0) {
+            copy[idx] = newAsset;
+          } else {
+            copy.push(newAsset);
+          }
+
+          // Synchronize canonical aliases to guarantee seamless lookup
+          const aliasMap: Record<string, string[]> = {
+            homepage_hero: ['img-hero'],
+            category_women: ['homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+            category_farmer: ['homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+            category_education: ['homepage_education', 'img-scheme-education', 'img-cat-student'],
+            category_worker: ['homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+            category_senior_citizen: ['homepage_senior', 'img-cat-senior'],
+            homepage_other_services: ['category_other_services', 'img-doc-services']
+          };
+
+          const aliases = aliasMap[slotId] || [];
+          for (const alias of aliases) {
+            const aIdx = copy.findIndex(img => img.id === alias);
+            if (aIdx >= 0) {
+              copy[aIdx] = { ...newAsset, id: alias };
+            } else {
+              copy.push({ ...newAsset, id: alias });
+            }
+          }
+
+          try {
+            localStorage.setItem('mahamahiti_custom_images', JSON.stringify(copy));
+          } catch {}
+          return copy;
+        });
+
+        // 2. If hero banner, also update homepageConfig and hero local cache
+        if (slotId === 'homepage_hero' || slotId === 'img-hero') {
+          const updatedConfig: HomepageConfig = {
+            ...homepageConfig,
+            heroImage: newUrl,
+            heroImageUrl: newUrl,
+            lastUpdated: new Date().toLocaleDateString('mr-IN')
+          };
+          setHomepageConfig(updatedConfig);
+          try {
+            localStorage.setItem('mahamahiti_hero_image', newUrl);
+            localStorage.setItem('mahamahiti_homepage_config', JSON.stringify(updatedConfig));
+          } catch {}
+        }
+
+        return { success: true, url: newUrl };
+      } else {
+        return { success: false, error: data.error || 'इमेज साठवण्यात अडचण आली.' };
+      }
+    } catch (err: any) {
+      console.error("uploadImageSlot failed:", err);
+      return { success: false, error: err?.message || 'सर्व्हरशी संपर्क होऊ शकला नाही.' };
+    }
+  };
+
   // Homepage Config
   const saveHomepageConfig = async (config: HomepageConfig) => {
     setHomepageConfig(config);
@@ -836,6 +959,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         deleteFaq,
         saveImage,
         deleteImage,
+        uploadImageSlot,
         saveHomepageConfig,
         saveSettings,
         isLoading,

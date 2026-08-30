@@ -7,7 +7,8 @@ import {
   RefreshCw,
   Sparkles,
   Eye,
-  Check
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { ImageAsset } from '../../types';
@@ -32,7 +33,7 @@ const HOMEPAGE_IMAGE_SLOTS: HomepageImageSlot[] = [
     recommendedSize: '1920 × 1080 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.hero,
-    homepageMapping: 'Homepage Hero Image',
+    homepageMapping: 'Homepage Hero Banner',
     aliases: ['img-hero', 'homepage_hero']
   },
   {
@@ -88,12 +89,13 @@ const HOMEPAGE_IMAGE_SLOTS: HomepageImageSlot[] = [
 ];
 
 export const AdminImages: React.FC = () => {
-  const { images, saveImage, homepageConfig, saveHomepageConfig, getImageByKey } = useAdminAuth();
+  const { images, uploadImageSlot, homepageConfig, getImageByKey } = useAdminAuth();
 
   const [successToast, setSuccessToast] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [savingSlotId, setSavingSlotId] = useState<string | null>(null);
 
-  // Stored pending changes per slot before saving
+  // Stored pending selected image data per slot before saving
   const [pendingImages, setPendingImages] = useState<{
     [slotId: string]: string;
   }>({});
@@ -102,7 +104,13 @@ export const AdminImages: React.FC = () => {
 
   const showNotification = (msg: string) => {
     setSuccessToast(msg);
-    setTimeout(() => setSuccessToast(''), 4000);
+    setErrorMessage('');
+    setTimeout(() => setSuccessToast(''), 5000);
+  };
+
+  const showError = (msg: string) => {
+    setErrorMessage(msg);
+    setTimeout(() => setErrorMessage(''), 6000);
   };
 
   // Get currently displayed URL for each slot
@@ -111,11 +119,11 @@ export const AdminImages: React.FC = () => {
     if (pendingImages[slot.id]) {
       return pendingImages[slot.id];
     }
-    // 2. Check context / localStorage image lookup
+    // 2. Check context / persistent image lookup
     return getImageByKey(slot.id, slot.defaultUrl);
   };
 
-  // Handle file selection
+  // Handle file selection and prepare client data
   const handleFileSelect = (slot: HomepageImageSlot, file: File) => {
     if (!file) return;
 
@@ -168,57 +176,41 @@ export const AdminImages: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  // Save changes to AdminContext + LocalStorage + HomepageConfig
+  // Save changes to persistent backend storage + adminStore + homepageConfig
   const handleSaveSlot = async (slot: HomepageImageSlot) => {
+    const pendingData = pendingImages[slot.id];
+    if (!pendingData) {
+      showNotification('हा फोटो आधीच अद्ययावत व सेव्ह केलेला आहे.');
+      return;
+    }
+
     setSavingSlotId(slot.id);
-    const finalUrl = getSlotImageUrl(slot);
+    setErrorMessage('');
 
-    const asset: ImageAsset = {
-      id: slot.id,
-      name: slot.title,
-      url: finalUrl,
-      altText: slot.title,
-      usedIn: slot.homepageMapping,
-      fileSize: slot.recommendedSize,
-      uploadedAt: new Date().toISOString().split('T')[0]
-    };
+    try {
+      const res = await uploadImageSlot(slot.id, pendingData, {
+        name: slot.title,
+        altText: slot.title,
+        recommendedSize: slot.recommendedSize,
+        usedIn: slot.homepageMapping
+      });
 
-    // Save primary ID
-    await saveImage(asset);
-
-    // Also sync all related aliases (e.g. category_women <-> homepage_women_child)
-    for (const alias of slot.aliases) {
-      if (alias !== slot.id) {
-        await saveImage({
-          ...asset,
-          id: alias
+      if (res.success && res.url) {
+        // Clear pending state for this slot
+        setPendingImages(prev => {
+          const copy = { ...prev };
+          delete copy[slot.id];
+          return copy;
         });
+        showNotification(`“${slot.title}” फोटो यशस्वीरित्या सेव्ह झाला व मुख्यपृष्ठावर त्वरित लागू झाला!`);
+      } else {
+        showError(res.error || 'इमेज सेव्ह करण्यात अडचण आली. कृपया पुन्हा प्रयत्न करा.');
       }
+    } catch (err: any) {
+      showError(err?.message || 'अपलोड अयशस्वी झाला.');
+    } finally {
+      setSavingSlotId(null);
     }
-
-    // If main Hero Image, sync to homepageConfig and direct local storage key
-    if (slot.id === 'homepage_hero') {
-      const updatedConfig = {
-        ...homepageConfig,
-        heroImage: finalUrl,
-        heroImageUrl: finalUrl,
-        lastUpdated: new Date().toLocaleDateString('mr-IN')
-      };
-      await saveHomepageConfig(updatedConfig);
-      try {
-        localStorage.setItem('mahamahiti_hero_image', finalUrl);
-      } catch {}
-    }
-
-    // Clear pending state for this slot
-    setPendingImages(prev => {
-      const copy = { ...prev };
-      delete copy[slot.id];
-      return copy;
-    });
-
-    setSavingSlotId(null);
-    showNotification('इमेज यशस्वीरित्या अपडेट झाली.');
   };
 
   const heroSlot = HOMEPAGE_IMAGE_SLOTS[0];
@@ -249,6 +241,14 @@ export const AdminImages: React.FC = () => {
         <div className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-900 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-sm animate-in fade-in slide-in-from-top-2">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <span>{successToast}</span>
+        </div>
+      )}
+
+      {/* Error Notification Toast */}
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-900 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-sm animate-in fade-in slide-in-from-top-2">
+          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+          <span>{errorMessage}</span>
         </div>
       )}
 

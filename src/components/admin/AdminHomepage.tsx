@@ -94,7 +94,7 @@ const HOMEPAGE_IMAGE_SECTIONS: ImageCardDef[] = [
 ];
 
 export const AdminHomepage: React.FC<AdminHomepageProps> = ({ onNavigate }) => {
-  const { homepageConfig, saveHomepageConfig, images, saveImage } = useAdminAuth();
+  const { homepageConfig, saveHomepageConfig, images, saveImage, uploadImageSlot } = useAdminAuth();
   
   const [successToast, setSuccessToast] = useState('');
   const [savingSlotId, setSavingSlotId] = useState<string | null>(null);
@@ -214,39 +214,42 @@ export const AdminHomepage: React.FC<AdminHomepageProps> = ({ onNavigate }) => {
 
   const handleSaveSlot = async (slot: ImageCardDef) => {
     setSavingSlotId(slot.id);
-    const finalUrl = getSlotUrl(slot);
+    const pending = pendingImages[slot.id];
 
-    await saveImage({
-      id: slot.id,
-      name: slot.name,
-      url: finalUrl,
-      altText: slot.name,
-      usedIn: `मुख्यपृष्ठ ${slot.section}`,
-      fileSize: 'Uploaded Image',
-      uploadedAt: new Date().toISOString().split('T')[0]
-    });
+    if (pending?.url) {
+      const canonicalSlotId = slot.id === 'img-hero' ? 'homepage_hero' : slot.id;
+      const res = await uploadImageSlot(canonicalSlotId, pending.url, {
+        name: slot.name,
+        altText: slot.name,
+        recommendedSize: slot.recommendedSize,
+        usedIn: `मुख्यपृष्ठ ${slot.section}`
+      });
 
-    if (slot.id === 'img-hero') {
-      const updatedConfig = {
-        ...homepageConfig,
-        heroImage: finalUrl,
-        heroImageUrl: finalUrl,
-        lastUpdated: new Date().toLocaleDateString('mr-IN')
-      };
-      await saveHomepageConfig(updatedConfig);
-      try {
-        localStorage.setItem('mahamahiti_hero_image', finalUrl);
-      } catch (e) {}
+      if (res.success) {
+        setPendingImages(prev => {
+          const copy = { ...prev };
+          delete copy[slot.id];
+          return copy;
+        });
+        showNotification(`"${slot.name}" कायमस्वरूपी सेव्ह झाला!`);
+      } else {
+        alert(res.error || 'इमेज सेव्ह करण्यात अडचण आली.');
+      }
+    } else {
+      const finalUrl = getSlotUrl(slot);
+      await saveImage({
+        id: slot.id,
+        name: slot.name,
+        url: finalUrl,
+        altText: slot.name,
+        usedIn: `मुख्यपृष्ठ ${slot.section}`,
+        fileSize: 'Uploaded Image',
+        uploadedAt: new Date().toISOString().split('T')[0]
+      });
+      showNotification(`"${slot.name}" सेव्ह करण्यात आला!`);
     }
 
-    setPendingImages(prev => {
-      const copy = { ...prev };
-      delete copy[slot.id];
-      return copy;
-    });
-
     setSavingSlotId(null);
-    showNotification(`"${slot.name}" सेव्ह करण्यात आला! मुख्यपृष्ठावर त्वरित बदल दिसेल.`);
   };
 
   const sections = [

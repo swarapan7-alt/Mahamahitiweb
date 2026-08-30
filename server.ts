@@ -141,6 +141,13 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
+  const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+  // Serve persistent uploads with cache-busting headers
+  app.use('/uploads', express.static(UPLOADS_DIR, { etag: false, maxAge: 0 }));
+
   app.use(express.json({ limit: '100mb' }));
   app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
@@ -393,6 +400,193 @@ async function startServer() {
                     adminStore.customImages?.find((img: any) => img.id === 'homepage_hero' || img.id === 'img-hero')?.url || 
                     null;
     res.json({ heroImage: heroImg });
+  });
+
+  // Dedicated public images endpoint
+  app.get("/api/images", (req, res) => {
+    res.json({ images: adminStore.customImages || [] });
+  });
+
+  // Dedicated Persistent Image Upload & Replacement Endpoint
+  app.post("/api/admin/upload-image", requireAdmin, (req, res) => {
+    try {
+      const { slotId, imageData, name, altText, recommendedSize, usedIn } = req.body;
+      
+      if (!slotId || !imageData) {
+        res.status(400).json({ error: "slotId आणि imageData आवश्यक आहेत." });
+        return;
+      }
+
+      // Extract image extension and raw base64 data
+      let base64Data = imageData;
+      let ext = 'jpg';
+      if (typeof imageData === 'string' && imageData.startsWith('data:')) {
+        const match = imageData.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+        if (match) {
+          const mimeSubtype = match[1].toLowerCase();
+          if (mimeSubtype === 'png') ext = 'png';
+          else if (mimeSubtype === 'webp') ext = 'webp';
+          else ext = 'jpg';
+          base64Data = match[2];
+        } else {
+          const parts = imageData.split(',');
+          if (parts.length > 1) {
+            base64Data = parts[1];
+          }
+        }
+      }
+
+      const buffer = Buffer.from(base64Data, 'base64');
+      if (buffer.length === 0) {
+        res.status(400).json({ error: "अवैध इमेज डेटा. कृपया पुन्हा प्रयत्न करा." });
+        return;
+      }
+
+      // Clean up previous files for this exact slotId to prevent disk buildup and fallback ambiguity
+      try {
+        if (fs.existsSync(UPLOADS_DIR)) {
+          const existingFiles = fs.readdirSync(UPLOADS_DIR);
+          for (const file of existingFiles) {
+            if (file.startsWith(`${slotId}_`) || file.startsWith(`${slotId}.`)) {
+              try {
+                fs.unlinkSync(path.join(UPLOADS_DIR, file));
+              } catch (e) {}
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Cleanup warning:", e);
+      }
+
+      const timestamp = Date.now();
+      const fileName = `${slotId}_${timestamp}.${ext}`;
+      const filePath = path.join(UPLOADS_DIR, fileName);
+      fs.writeFileSync(filePath, buffer);
+
+      // Construct permanent URL with timestamp query for instant cache invalidation
+      const permanentUrl = `/uploads/${fileName}?v=${timestamp}`;
+
+      // Update adminStore.customImages in-place
+      if (!adminStore.customImages) {
+        adminStore.customImages = [];
+      }
+
+      const slotMetaDict: Record<string, { name: string; usedIn: string; altText: string; recommendedSize: string }> = {
+        homepage_hero: {
+          name: 'मुख्य Hero Image',
+          usedIn: 'Homepage Hero Banner',
+          altText: 'महाराष्ट्र शासन नागरिक कल्याण योजना',
+          recommendedSize: '1920 × 1080 px (16:9)'
+        },
+        category_women: {
+          name: 'महिलांसाठी योजना',
+          usedIn: 'Homepage Women Category Image',
+          altText: 'मुख्यमंत्री माझी लाडकी बहीण योजना - महिला सक्षमीकरण',
+          recommendedSize: '1280 × 720 px (16:9)'
+        },
+        category_farmer: {
+          name: 'शेतकऱ्यांसाठी योजना',
+          usedIn: 'Homepage Farmer Category Image',
+          altText: 'नमो शेतकरी महासन्मान निधी - शेतकरी कल्याण',
+          recommendedSize: '1280 × 720 px (16:9)'
+        },
+        category_education: {
+          name: 'विद्यार्थ्यांसाठी योजना',
+          usedIn: 'Homepage Student Category Image',
+          altText: 'महाराष्ट्र मोफत उच्च शिक्षण व स्वाधार शिष्यवृत्ती - विद्यार्थी',
+          recommendedSize: '1280 × 720 px (16:9)'
+        },
+        category_worker: {
+          name: 'कामगारांसाठी योजना',
+          usedIn: 'Homepage Worker Category Image',
+          altText: 'महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी योजना',
+          recommendedSize: '1280 × 720 px (16:9)'
+        },
+        category_senior_citizen: {
+          name: 'ज्येष्ठ नागरिकांसाठी योजना',
+          usedIn: 'Homepage Senior Citizen Category Image',
+          altText: 'ज्येष्ठ नागरिक कल्याण व पेन्शन योजना',
+          recommendedSize: '1280 × 720 px (16:9)'
+        },
+        homepage_other_services: {
+          name: 'इतर सेवा व परिपत्रके',
+          usedIn: 'Homepage Other Services Image',
+          altText: 'आपले सरकार व शासकीय दाखले सेवा मार्गदर्शक',
+          recommendedSize: '1280 × 720 px (16:9)'
+        }
+      };
+
+      const meta = slotMetaDict[slotId] || {
+        name: name || slotId,
+        usedIn: usedIn || slotId,
+        altText: altText || name || slotId,
+        recommendedSize: recommendedSize || '16:9'
+      };
+
+      const asset = {
+        id: slotId,
+        name: name || meta.name,
+        url: permanentUrl,
+        altText: altText || meta.altText,
+        usedIn: usedIn || meta.usedIn,
+        fileSize: recommendedSize || meta.recommendedSize,
+        uploadedAt: new Date().toISOString().split('T')[0]
+      };
+
+      // Update primary slot record without duplicating
+      const existingIndex = adminStore.customImages.findIndex((img: any) => img.id === slotId);
+      if (existingIndex >= 0) {
+        adminStore.customImages[existingIndex] = asset;
+      } else {
+        adminStore.customImages.push(asset);
+      }
+
+      // Synchronize canonical aliases to guarantee seamless lookup across any legacy callers
+      const aliasMapping: Record<string, string[]> = {
+        homepage_hero: ['img-hero'],
+        category_women: ['homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+        category_farmer: ['homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+        category_education: ['homepage_education', 'img-scheme-education', 'img-cat-student'],
+        category_worker: ['homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+        category_senior_citizen: ['homepage_senior', 'img-cat-senior'],
+        homepage_other_services: ['category_other_services', 'img-doc-services']
+      };
+
+      const aliases = aliasMapping[slotId] || [];
+      for (const alias of aliases) {
+        const aIdx = adminStore.customImages.findIndex((img: any) => img.id === alias);
+        if (aIdx >= 0) {
+          adminStore.customImages[aIdx].url = permanentUrl;
+        } else {
+          adminStore.customImages.push({
+            ...asset,
+            id: alias
+          });
+        }
+      }
+
+      // If hero image, synchronize homepageConfig as well
+      if (slotId === 'homepage_hero' || slotId === 'img-hero') {
+        if (!adminStore.homepageConfig) {
+          adminStore.homepageConfig = {};
+        }
+        adminStore.homepageConfig.heroImage = permanentUrl;
+        adminStore.homepageConfig.heroImageUrl = permanentUrl;
+      }
+
+      saveAdminStore(adminStore);
+
+      res.json({
+        success: true,
+        url: permanentUrl,
+        slotId,
+        imageAsset: asset,
+        message: "फोटो कायमस्वरूपी साठवला गेला व मुख्यपृष्ठावर त्वरित लागू झाला."
+      });
+    } catch (err: any) {
+      console.error("Upload handler error:", err);
+      res.status(500).json({ error: err?.message || "इमेज अपलोड करण्यात त्रुटी आली." });
+    }
   });
 
   app.post("/api/hero-image", (req, res) => {
