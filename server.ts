@@ -495,77 +495,100 @@ async function startServer() {
         return;
       }
 
-      // Clean up previous files for this exact slotId to prevent disk buildup and fallback ambiguity
-      try {
-        if (fs.existsSync(UPLOADS_DIR)) {
-          const existingFiles = fs.readdirSync(UPLOADS_DIR);
-          for (const file of existingFiles) {
-            if (file.startsWith(`${slotId}_`) || file.startsWith(`${slotId}.`)) {
-              try {
-                fs.unlinkSync(path.join(UPLOADS_DIR, file));
-              } catch (e) {}
-            }
-          }
-        }
-      } catch (e) {
-        console.warn("Cleanup warning:", e);
-      }
-
+      // 1. Generate unique filename for the new image
       const timestamp = Date.now();
       const fileName = `${slotId}_${timestamp}.${ext}`;
       const filePath = path.join(UPLOADS_DIR, fileName);
+
+      // 2. Write new image file to disk FIRST
       fs.writeFileSync(filePath, buffer);
 
-      // Construct permanent URL with timestamp query for instant cache invalidation
+      // 3. Verify upload succeeded on disk before touching any database or existing state
+      if (!fs.existsSync(filePath) || fs.statSync(filePath).size === 0) {
+        res.status(500).json({ error: "नवीन इमेज डिस्कवर साठवण्यात अडचण आली." });
+        return;
+      }
+
+      // 4. Permanent URL reference
       const permanentUrl = `/uploads/${fileName}?v=${timestamp}`;
 
-      // Update adminStore.customImages in-place
+      // 5. Update adminStore in-place
       if (!adminStore.customImages) {
         adminStore.customImages = [];
       }
 
       const slotMetaDict: Record<string, { name: string; usedIn: string; altText: string; recommendedSize: string }> = {
         homepage_hero: {
-          name: 'मुख्य Hero Image',
+          name: 'Homepage Hero (मुख्य Hero Image)',
           usedIn: 'Homepage Hero Banner',
           altText: 'महाराष्ट्र शासन नागरिक कल्याण योजना',
-          recommendedSize: '1920 × 1080 px (16:9)'
+          recommendedSize: '1280 × 720 px'
+        },
+        women_scheme: {
+          name: 'महिलांसाठी योजना',
+          usedIn: 'Homepage Women Category Image',
+          altText: 'मुख्यमंत्री माझी लाडकी बहीण योजना - महिला सक्षमीकरण',
+          recommendedSize: '1280 × 720 px'
         },
         category_women: {
           name: 'महिलांसाठी योजना',
           usedIn: 'Homepage Women Category Image',
           altText: 'मुख्यमंत्री माझी लाडकी बहीण योजना - महिला सक्षमीकरण',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
+        },
+        farmer_scheme: {
+          name: 'शेतकऱ्यांसाठी योजना',
+          usedIn: 'Homepage Farmer Category Image',
+          altText: 'नमो शेतकरी महासन्मान निधी - शेतकरी कल्याण',
+          recommendedSize: '1280 × 720 px'
         },
         category_farmer: {
           name: 'शेतकऱ्यांसाठी योजना',
           usedIn: 'Homepage Farmer Category Image',
           altText: 'नमो शेतकरी महासन्मान निधी - शेतकरी कल्याण',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
+        },
+        student_scheme: {
+          name: 'विद्यार्थ्यांसाठी योजना',
+          usedIn: 'Homepage Student Category Image',
+          altText: 'महाराष्ट्र मोफत उच्च शिक्षण व स्वाधार शिष्यवृत्ती - विद्यार्थी',
+          recommendedSize: '1280 × 720 px'
         },
         category_education: {
           name: 'विद्यार्थ्यांसाठी योजना',
           usedIn: 'Homepage Student Category Image',
           altText: 'महाराष्ट्र मोफत उच्च शिक्षण व स्वाधार शिष्यवृत्ती - विद्यार्थी',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
+        },
+        worker_scheme: {
+          name: 'कामगारांसाठी योजना',
+          usedIn: 'Homepage Worker Category Image',
+          altText: 'महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी योजना',
+          recommendedSize: '1280 × 720 px'
         },
         category_worker: {
           name: 'कामगारांसाठी योजना',
           usedIn: 'Homepage Worker Category Image',
           altText: 'महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी योजना',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
+        },
+        senior_citizen_scheme: {
+          name: 'ज्येष्ठ नागरिकांसाठी योजना',
+          usedIn: 'Homepage Senior Citizen Category Image',
+          altText: 'ज्येष्ठ नागरिक कल्याण व पेन्शन योजना',
+          recommendedSize: '1280 × 720 px'
         },
         category_senior_citizen: {
           name: 'ज्येष्ठ नागरिकांसाठी योजना',
           usedIn: 'Homepage Senior Citizen Category Image',
           altText: 'ज्येष्ठ नागरिक कल्याण व पेन्शन योजना',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
         },
         homepage_other_services: {
           name: 'इतर सेवा व परिपत्रके',
           usedIn: 'Homepage Other Services Image',
           altText: 'आपले सरकार व शासकीय दाखले सेवा मार्गदर्शक',
-          recommendedSize: '1280 × 720 px (16:9)'
+          recommendedSize: '1280 × 720 px'
         }
       };
 
@@ -573,7 +596,7 @@ async function startServer() {
         name: name || slotId,
         usedIn: usedIn || slotId,
         altText: altText || name || slotId,
-        recommendedSize: recommendedSize || '16:9'
+        recommendedSize: recommendedSize || '1280 × 720 px'
       };
 
       const asset = {
@@ -586,7 +609,7 @@ async function startServer() {
         uploadedAt: new Date().toISOString().split('T')[0]
       };
 
-      // Update primary slot record without duplicating
+      // 6. Update primary slot record
       const existingIndex = adminStore.customImages.findIndex((img: any) => img.id === slotId);
       if (existingIndex >= 0) {
         adminStore.customImages[existingIndex] = asset;
@@ -594,14 +617,19 @@ async function startServer() {
         adminStore.customImages.push(asset);
       }
 
-      // Synchronize canonical aliases to guarantee seamless lookup across any legacy callers
+      // 7. Synchronize canonical aliases to guarantee seamless lookup across any callers
       const aliasMapping: Record<string, string[]> = {
         homepage_hero: ['img-hero'],
-        category_women: ['homepage_women_child', 'img-scheme-women', 'img-cat-women'],
-        category_farmer: ['homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
-        category_education: ['homepage_education', 'img-scheme-education', 'img-cat-student'],
-        category_worker: ['homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
-        category_senior_citizen: ['homepage_senior', 'img-cat-senior'],
+        women_scheme: ['category_women', 'homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+        category_women: ['women_scheme', 'homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+        farmer_scheme: ['category_farmer', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+        category_farmer: ['farmer_scheme', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+        student_scheme: ['category_education', 'homepage_education', 'img-scheme-education', 'img-cat-student'],
+        category_education: ['student_scheme', 'homepage_education', 'img-scheme-education', 'img-cat-student'],
+        worker_scheme: ['category_worker', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+        category_worker: ['worker_scheme', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+        senior_citizen_scheme: ['category_senior_citizen', 'homepage_senior', 'img-cat-senior'],
+        category_senior_citizen: ['senior_citizen_scheme', 'homepage_senior', 'img-cat-senior'],
         homepage_other_services: ['category_other_services', 'img-doc-services']
       };
 
@@ -618,7 +646,7 @@ async function startServer() {
         }
       }
 
-      // If hero image, synchronize homepageConfig as well
+      // 8. If hero image, synchronize homepageConfig as well
       if (slotId === 'homepage_hero' || slotId === 'img-hero') {
         if (!adminStore.homepageConfig) {
           adminStore.homepageConfig = {};
@@ -627,7 +655,24 @@ async function startServer() {
         adminStore.homepageConfig.heroImageUrl = permanentUrl;
       }
 
+      // 9. Save database record and confirm success
       saveAdminStore(adminStore);
+
+      // 10. ONLY AFTER database update has succeeded, optionally clean up older files
+      try {
+        if (fs.existsSync(UPLOADS_DIR)) {
+          const existingFiles = fs.readdirSync(UPLOADS_DIR);
+          for (const file of existingFiles) {
+            if (file !== fileName && (file.startsWith(`${slotId}_`) || file.startsWith(`${slotId}.`))) {
+              try {
+                fs.unlinkSync(path.join(UPLOADS_DIR, file));
+              } catch (e) {}
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Post-save cleanup warning:", e);
+      }
 
       res.json({
         success: true,

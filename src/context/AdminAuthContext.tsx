@@ -818,11 +818,16 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           // Synchronize canonical aliases to guarantee seamless lookup
           const aliasMap: Record<string, string[]> = {
             homepage_hero: ['img-hero'],
-            category_women: ['homepage_women_child', 'img-scheme-women', 'img-cat-women'],
-            category_farmer: ['homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
-            category_education: ['homepage_education', 'img-scheme-education', 'img-cat-student'],
-            category_worker: ['homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
-            category_senior_citizen: ['homepage_senior', 'img-cat-senior'],
+            women_scheme: ['category_women', 'homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+            category_women: ['women_scheme', 'homepage_women_child', 'img-scheme-women', 'img-cat-women'],
+            farmer_scheme: ['category_farmer', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+            category_farmer: ['farmer_scheme', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer'],
+            student_scheme: ['category_education', 'homepage_education', 'img-scheme-education', 'img-cat-student'],
+            category_education: ['student_scheme', 'homepage_education', 'img-scheme-education', 'img-cat-student'],
+            worker_scheme: ['category_worker', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+            category_worker: ['worker_scheme', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+            senior_citizen_scheme: ['category_senior_citizen', 'homepage_senior', 'img-cat-senior'],
+            category_senior_citizen: ['senior_citizen_scheme', 'homepage_senior', 'img-cat-senior'],
             homepage_other_services: ['category_other_services', 'img-doc-services']
           };
 

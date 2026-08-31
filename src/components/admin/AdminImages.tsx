@@ -28,63 +28,63 @@ interface HomepageImageSlot {
 const HOMEPAGE_IMAGE_SLOTS: HomepageImageSlot[] = [
   {
     id: 'homepage_hero',
-    title: 'मुख्य Hero Image',
-    subtitle: 'Homepage Main Hero • 16:9 • Recommended: 1920 × 1080 px',
-    recommendedSize: '1920 × 1080 px',
+    title: 'Homepage Hero (मुख्य Hero Image)',
+    subtitle: 'मुख्य Hero Banner • 16:9 • Recommended: 1280 × 720 px (or 1920 × 1080 px)',
+    recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.hero,
     homepageMapping: 'Homepage Hero Banner',
     aliases: ['img-hero', 'homepage_hero']
   },
   {
-    id: 'category_women',
+    id: 'women_scheme',
     title: 'महिलांसाठी योजना',
-    subtitle: 'महिलांसाठी • 16:9 • Recommended: 1280 × 720 px',
+    subtitle: 'महिला व बाल विकास योजना • 16:9 • Recommended: 1280 × 720 px',
     recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.women,
     homepageMapping: 'Homepage Women Category Image',
-    aliases: ['homepage_women_child', 'category_women']
+    aliases: ['category_women', 'homepage_women_child', 'women_scheme']
   },
   {
-    id: 'category_farmer',
+    id: 'farmer_scheme',
     title: 'शेतकऱ्यांसाठी योजना',
-    subtitle: 'शेतकऱ्यांसाठी • 16:9 • Recommended: 1280 × 720 px',
+    subtitle: 'शेतकरी कल्याण योजना • 16:9 • Recommended: 1280 × 720 px',
     recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.farmer,
     homepageMapping: 'Homepage Farmer Category Image',
-    aliases: ['homepage_farmer', 'category_farmer']
+    aliases: ['category_farmer', 'homepage_farmer', 'farmer_scheme']
   },
   {
-    id: 'category_education',
+    id: 'student_scheme',
     title: 'विद्यार्थ्यांसाठी योजना',
-    subtitle: 'विद्यार्थ्यांसाठी • 16:9 • Recommended: 1280 × 720 px',
+    subtitle: 'शिक्षण व शिष्यवृत्ती योजना • 16:9 • Recommended: 1280 × 720 px',
     recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.education,
     homepageMapping: 'Homepage Student Category Image',
-    aliases: ['homepage_education', 'category_education']
+    aliases: ['category_education', 'homepage_education', 'student_scheme']
   },
   {
-    id: 'category_worker',
+    id: 'worker_scheme',
     title: 'कामगारांसाठी योजना',
-    subtitle: 'कामगारांसाठी • 16:9 • Recommended: 1280 × 720 px',
+    subtitle: 'कामगार कल्याण योजना • 16:9 • Recommended: 1280 × 720 px',
     recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.worker,
     homepageMapping: 'Homepage Worker Category Image',
-    aliases: ['homepage_worker', 'category_worker']
+    aliases: ['category_worker', 'homepage_worker', 'worker_scheme']
   },
   {
-    id: 'category_senior_citizen',
+    id: 'senior_citizen_scheme',
     title: 'ज्येष्ठ नागरिकांसाठी योजना',
-    subtitle: 'ज्येष्ठ नागरिकांसाठी • 16:9 • Recommended: 1280 × 720 px',
+    subtitle: 'ज्येष्ठ नागरिक कल्याण व पेन्शन • 16:9 • Recommended: 1280 × 720 px',
     recommendedSize: '1280 × 720 px',
     aspectRatio: '16:9',
     defaultUrl: DEFAULT_CATEGORY_IMAGES.senior_citizen,
     homepageMapping: 'Homepage Senior Citizen Category Image',
-    aliases: ['homepage_senior', 'category_senior_citizen']
+    aliases: ['category_senior_citizen', 'homepage_senior', 'senior_citizen_scheme']
   }
 ];
 

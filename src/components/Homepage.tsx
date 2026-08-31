@@ -21,6 +21,7 @@ import { Scheme } from '../types';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { DEFAULT_CATEGORY_IMAGES } from '../utils/schemeImageUtils';
 import { UpdatesTicker } from './UpdatesTicker';
+import { VisitorCounter } from './VisitorCounter';
 
 interface HomepageProps {
   onNavigate: (tab: string, categoryFilter?: string) => void;
@@ -113,28 +114,28 @@ export const Homepage: React.FC<HomepageProps> = ({
   );
 
   const womenImageSrc = getImageByKey(
-    'category_women',
-    getImageByKey('homepage_women_child', DEFAULT_CATEGORY_IMAGES.women)
+    'women_scheme',
+    getImageByKey('category_women', getImageByKey('homepage_women_child', DEFAULT_CATEGORY_IMAGES.women))
   );
 
   const farmerImageSrc = getImageByKey(
-    'category_farmer',
-    getImageByKey('homepage_farmer', DEFAULT_CATEGORY_IMAGES.farmer)
+    'farmer_scheme',
+    getImageByKey('category_farmer', getImageByKey('homepage_farmer', DEFAULT_CATEGORY_IMAGES.farmer))
   );
 
   const studentImageSrc = getImageByKey(
-    'category_education',
-    getImageByKey('homepage_education', DEFAULT_CATEGORY_IMAGES.education)
+    'student_scheme',
+    getImageByKey('category_education', getImageByKey('homepage_education', DEFAULT_CATEGORY_IMAGES.education))
   );
 
   const workerImageSrc = getImageByKey(
-    'category_worker',
-    getImageByKey('homepage_worker', DEFAULT_CATEGORY_IMAGES.worker)
+    'worker_scheme',
+    getImageByKey('category_worker', getImageByKey('homepage_worker', DEFAULT_CATEGORY_IMAGES.worker))
   );
 
   const seniorImageSrc = getImageByKey(
-    'category_senior_citizen',
-    DEFAULT_CATEGORY_IMAGES.senior_citizen
+    'senior_citizen_scheme',
+    getImageByKey('category_senior_citizen', getImageByKey('homepage_senior', DEFAULT_CATEGORY_IMAGES.senior_citizen))
   );
 
   // 5 Main Visual Categories (16:9 Real images)
@@ -144,6 +145,7 @@ export const Homepage: React.FC<HomepageProps> = ({
       title: 'महिलांसाठी',
       subtitle: 'आर्थिक सहाय्य, लाडकी बहीण व स्वावलंबन योजना',
       image: womenImageSrc,
+      fallbackImage: DEFAULT_CATEGORY_IMAGES.women,
       categoryKey: 'women',
       icon: HeartHandshake,
       badgeColor: 'bg-[#FFF0F5] text-[#962B4E] border-[#FECDD3]',
@@ -155,6 +157,7 @@ export const Homepage: React.FC<HomepageProps> = ({
       title: 'शेतकऱ्यांसाठी',
       subtitle: 'सन्मान निधी, पीक विमा, सिंचन व कृषी अवजारे',
       image: farmerImageSrc,
+      fallbackImage: DEFAULT_CATEGORY_IMAGES.farmer,
       categoryKey: 'agriculture',
       icon: Sprout,
       badgeColor: 'bg-[#EAF7EF] text-[#12643A] border-[#BBF7D0]',
@@ -166,6 +169,7 @@ export const Homepage: React.FC<HomepageProps> = ({
       title: 'विद्यार्थ्यांसाठी',
       subtitle: 'शिष्यवृत्ती, फी सवलत व वसतिगृह भत्ता योजना',
       image: studentImageSrc,
+      fallbackImage: DEFAULT_CATEGORY_IMAGES.education,
       categoryKey: 'education',
       icon: GraduationCap,
       badgeColor: 'bg-[#EEF1FF] text-[#30428D] border-[#C7D2FE]',
@@ -177,6 +181,7 @@ export const Homepage: React.FC<HomepageProps> = ({
       title: 'कामगारांसाठी',
       subtitle: 'BOCW नोंदणी, सुरक्षा संच, आरोग्य व पेन्शन',
       image: workerImageSrc,
+      fallbackImage: DEFAULT_CATEGORY_IMAGES.worker,
       categoryKey: 'worker',
       icon: HardHat,
       badgeColor: 'bg-[#FFF7ED] text-[#9A3412] border-[#FED7AA]',
@@ -188,6 +193,7 @@ export const Homepage: React.FC<HomepageProps> = ({
       title: 'ज्येष्ठ नागरिकांसाठी',
       subtitle: 'श्रावणबाळ पेन्शन, वयोश्री व वैद्यकीय आधार',
       image: seniorImageSrc,
+      fallbackImage: DEFAULT_CATEGORY_IMAGES.senior_citizen,
       categoryKey: 'senior',
       icon: Users2,
       badgeColor: 'bg-[#FFF5E5] text-[#955B0D] border-[#FED7AA]',
@@ -255,6 +261,11 @@ export const Homepage: React.FC<HomepageProps> = ({
               src={heroImageSrc}
               alt="महाराष्ट्र शासन नागरिक कल्याण योजना व माहिती"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                if (e.currentTarget.src !== DEFAULT_CATEGORY_IMAGES.hero) {
+                  e.currentTarget.src = DEFAULT_CATEGORY_IMAGES.hero;
+                }
+              }}
               className="w-full h-full object-cover object-center"
             />
           </div>
@@ -363,6 +374,11 @@ export const Homepage: React.FC<HomepageProps> = ({
                     src={card.image}
                     alt={card.title}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      if (e.currentTarget.src !== card.fallbackImage) {
+                        e.currentTarget.src = card.fallbackImage;
+                      }
+                    }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   
@@ -642,7 +658,12 @@ export const Homepage: React.FC<HomepageProps> = ({
       </section>
 
       {/* ========================================================= */}
-      {/* 6. CITIZEN GUIDANCE ("नागरिक मार्गदर्शन" - SHORT NOTICE)   */}
+      {/* 6. GENUINE LIVE VISITOR COUNTER SECTION                   */}
+      {/* ========================================================= */}
+      <VisitorCounter />
+
+      {/* ========================================================= */}
+      {/* 7. CITIZEN GUIDANCE ("नागरिक मार्गदर्शन" - SHORT NOTICE)   */}
       {/* ========================================================= */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-[#FAF9FD] via-white to-[#FAF9FD] rounded-2xl p-4 sm:p-6 border-2 border-[#DCD8EC] shadow-[0_4px_20px_rgba(91,69,198,0.04)] flex flex-col sm:flex-row items-center gap-3.5 text-center sm:text-left">

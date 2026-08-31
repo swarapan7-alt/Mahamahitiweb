@@ -61,6 +61,7 @@ import {
 } from './components/MobileNav';
 import { AdminApp } from './components/admin/AdminApp';
 import { AdminAuthProvider } from './context/AdminAuthContext';
+import { trackPageView } from './utils/analytics';
 import { 
   ArrowUp,
   Sparkles,
@@ -76,6 +77,13 @@ function AppContent() {
     return 'home';
   });
   const [searchFilter, setSearchFilter] = useState<string>('');
+  
+  // Track genuine pageviews automatically across user navigation
+  useEffect(() => {
+    if (activeTab !== 'admin') {
+      trackPageView(activeTab || 'home');
+    }
+  }, [activeTab]);
   
   // Accessibility State
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
