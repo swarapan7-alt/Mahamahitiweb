@@ -27,10 +27,25 @@ export function getOrCreateVisitorId(): string {
   }
 }
 
+// In-memory guard to prevent duplicate tracking caused by React re-renders or strict mode
+let lastTrackedPath: string = '';
+let lastTrackedTime: number = 0;
+
 /**
- * Tracks a page visit persistently on the backend
+ * Tracks a page visit persistently on the backend with debounce protection
  */
-export async function trackPageView(path?: string): Promise<VisitorStats | null> {
+export async function trackPageView(path?: string, force = false): Promise<VisitorStats | null> {
+  const currentPath = path || (typeof window !== 'undefined' ? window.location.pathname + window.location.hash : '/');
+  const now = Date.now();
+
+  // Deduplicate rapid duplicate calls (within 1500ms for the same path)
+  if (!force && currentPath === lastTrackedPath && (now - lastTrackedTime) < 1500) {
+    return getVisitorStats();
+  }
+
+  lastTrackedPath = currentPath;
+  lastTrackedTime = now;
+
   try {
     const visitorId = getOrCreateVisitorId();
     const res = await fetch('/api/visitors/track', {
@@ -40,7 +55,7 @@ export async function trackPageView(path?: string): Promise<VisitorStats | null>
       },
       body: JSON.stringify({
         visitorId,
-        path: path || (typeof window !== 'undefined' ? window.location.pathname + window.location.hash : '/')
+        path: currentPath
       })
     });
 

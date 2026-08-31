@@ -117,11 +117,11 @@ export const UpdatesTicker: React.FC<UpdatesTickerProps> = ({
           </button>
         </div>
 
-        {/* Left-to-Right Scrolling Marquee Track */}
+        {/* Right-to-Left Scrolling Marquee Track */}
         <div className="relative flex-1 overflow-hidden py-2 sm:py-2.5 px-3 sm:px-4 min-w-0">
           <div 
             ref={trackRef}
-            className="flex items-center space-x-8 sm:space-x-12 animate-marquee-ltr whitespace-nowrap hover:[animation-play-state:paused] cursor-pointer"
+            className="flex items-center space-x-8 sm:space-x-12 animate-marquee whitespace-nowrap hover:[animation-play-state:paused] cursor-pointer"
             style={{ animationDuration: `${animationDuration}s` }}
           >
             {/* Duplicated list to create a seamless infinite loop */}

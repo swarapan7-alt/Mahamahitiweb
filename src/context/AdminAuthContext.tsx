@@ -109,6 +109,24 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     uploadedAt: '२०२६-०१-१०'
   },
   {
+    id: 'women_scheme',
+    name: 'महिला व बाल विकास योजना (लाडकी बहीण इ.)',
+    url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
+    altText: 'मुख्यमंत्री माझी लाडकी बहीण योजना - महिला सक्षमीकरण',
+    usedIn: 'महिला व बाल विकास योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१२'
+  },
+  {
+    id: 'category_women',
+    name: 'महिला व बाल विकास योजना',
+    url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
+    altText: 'मुख्यमंत्री माझी लाडकी बहीण योजना - महिला सक्षमीकरण',
+    usedIn: 'महिला व बाल विकास योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१२'
+  },
+  {
     id: 'homepage_women_child',
     name: 'महिला व बाल विकास योजना (लाडकी बहीण इ.)',
     url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
@@ -116,6 +134,24 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     usedIn: 'महिला व बाल विकास योजना',
     fileSize: '1200 × 675 px (16:9)',
     uploadedAt: '२०२६-०१-१२'
+  },
+  {
+    id: 'farmer_scheme',
+    name: 'शेतकरी कल्याण योजना (नमो शेतकरी, पीक विमा इ.)',
+    url: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80',
+    altText: 'नमो शेतकरी महासन्मान निधी / सौर कृषी पंप योजना - शेतकरी कल्याण',
+    usedIn: 'शेतकरी कल्याण योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१५'
+  },
+  {
+    id: 'category_farmer',
+    name: 'शेतकरी कल्याण योजना',
+    url: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80',
+    altText: 'नमो शेतकरी महासन्मान निधी / सौर कृषी पंप योजना - शेतकरी कल्याण',
+    usedIn: 'शेतकरी कल्याण योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१५'
   },
   {
     id: 'homepage_farmer',
@@ -127,6 +163,24 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     uploadedAt: '२०२६-०१-१५'
   },
   {
+    id: 'student_scheme',
+    name: 'शिक्षण योजना (शिष्यवृत्ती, मोफत उच्च शिक्षण इ.)',
+    url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+    altText: 'महाराष्ट्र मोफत उच्च शिक्षण व स्वाधार शिष्यवृत्ती योजना - विद्यार्थी',
+    usedIn: 'शिक्षण योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१८'
+  },
+  {
+    id: 'category_education',
+    name: 'शिक्षण योजना',
+    url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+    altText: 'महाराष्ट्र मोफत उच्च शिक्षण व स्वाधार शिष्यवृत्ती योजना - विद्यार्थी',
+    usedIn: 'शिक्षण योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१८'
+  },
+  {
     id: 'homepage_education',
     name: 'शिक्षण योजना (शिष्यवृत्ती, मोफत उच्च शिक्षण इ.)',
     url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
@@ -136,13 +190,13 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     uploadedAt: '२०२६-०१-१८'
   },
   {
-    id: 'homepage_health',
-    name: 'आरोग्य योजना (महात्मा फुले जन आरोग्य, आयुष्यमान भारत)',
-    url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
-    altText: 'महात्मा जोतीराव फुले जन आरोग्य योजना - आरोग्य सेवा',
-    usedIn: 'आरोग्य योजना',
+    id: 'worker_scheme',
+    name: 'कामगार योजना (BOCW नोंदणी, किट, सुरक्षा)',
+    url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&h=675&q=80',
+    altText: 'महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी योजना',
+    usedIn: 'कामगार कल्याण योजना',
     fileSize: '1200 × 675 px (16:9)',
-    uploadedAt: '२०२६-०१-२०'
+    uploadedAt: '२०२६-०१-१९'
   },
   {
     id: 'category_worker',
@@ -154,6 +208,24 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     uploadedAt: '२०२६-०१-१९'
   },
   {
+    id: 'homepage_worker',
+    name: 'कामगार योजना (BOCW नोंदणी, किट, सुरक्षा)',
+    url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&h=675&q=80',
+    altText: 'महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी योजना',
+    usedIn: 'कामगार कल्याण योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-१९'
+  },
+  {
+    id: 'senior_citizen_scheme',
+    name: 'ज्येष्ठ नागरिक योजना (श्रावणबाळ पेन्शन इ.)',
+    url: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=1200&q=80',
+    altText: 'ज्येष्ठ नागरिक कल्याण व पेन्शन योजना',
+    usedIn: 'ज्येष्ठ नागरिक योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-२२'
+  },
+  {
     id: 'category_senior_citizen',
     name: 'ज्येष्ठ नागरिक योजना (श्रावणबाळ पेन्शन इ.)',
     url: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=1200&q=80',
@@ -161,6 +233,24 @@ const DEFAULT_IMAGES: ImageAsset[] = [
     usedIn: 'ज्येष्ठ नागरिक योजना',
     fileSize: '1200 × 675 px (16:9)',
     uploadedAt: '२०२६-०१-२२'
+  },
+  {
+    id: 'homepage_senior',
+    name: 'ज्येष्ठ नागरिक योजना (श्रावणबाळ पेन्शन इ.)',
+    url: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=1200&q=80',
+    altText: 'ज्येष्ठ नागरिक कल्याण व पेन्शन योजना',
+    usedIn: 'ज्येष्ठ नागरिक योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-२२'
+  },
+  {
+    id: 'homepage_health',
+    name: 'आरोग्य योजना (महात्मा फुले जन आरोग्य, आयुष्यमान भारत)',
+    url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+    altText: 'महात्मा जोतीराव फुले जन आरोग्य योजना - आरोग्य सेवा',
+    usedIn: 'आरोग्य योजना',
+    fileSize: '1200 × 675 px (16:9)',
+    uploadedAt: '२०२६-०१-२०'
   },
   {
     id: 'homepage_other_services',
@@ -206,63 +296,36 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [homepageConfig, setHomepageConfig] = useState<HomepageConfig>(DEFAULT_HOMEPAGE_CONFIG);
   const [settings, setSettings] = useState<AdminSettings>(DEFAULT_SETTINGS);
 
-  // Helper function to normalize images array and migrate legacy keys to permanent keys
+  // Helper function to normalize images array and maintain persistent slot integrity
   const normalizeImages = (rawImages: ImageAsset[]): ImageAsset[] => {
     if (!Array.isArray(rawImages)) return DEFAULT_IMAGES;
 
-    const legacyMap: Record<string, string> = {
-      'img-hero': 'homepage_hero',
-      'img-scheme-women': 'homepage_women_child',
-      'img-cat-women': 'category_women',
-      'img-scheme-1': 'homepage_women_child',
-      'img-scheme-farmer': 'homepage_farmer',
-      'img-cat-farmer': 'category_farmer',
-      'img-scheme-2': 'homepage_farmer',
-      'img-scheme-education': 'homepage_education',
-      'img-cat-student': 'category_education',
-      'img-scheme-3': 'homepage_education',
-      'img-scheme-worker': 'category_worker',
-      'img-cat-worker': 'category_worker',
-      'homepage_worker': 'category_worker',
-      'img-scheme-health': 'homepage_health',
-      'img-cat-health': 'category_health',
-      'img-cat-senior': 'category_senior_citizen',
-      'img-scheme-social': 'homepage_health',
-      'img-doc-services': 'homepage_other_services',
-      'img-latest-1': 'homepage_other_services',
-    };
-
     const imageMap = new Map<string, ImageAsset>();
     
-    // Seed defaults first
+    // Seed defaults first so no slot is ever missing or blank
     for (const def of DEFAULT_IMAGES) {
       imageMap.set(def.id, { ...def });
     }
 
-    // Overlay raw images
+    // Overlay raw saved images
     for (const raw of rawImages) {
       if (!raw || !raw.id) continue;
-      const targetId = legacyMap[raw.id] || raw.id;
-      const existing = imageMap.get(targetId);
+      const existing = imageMap.get(raw.id);
       if (existing) {
-        imageMap.set(targetId, {
+        imageMap.set(raw.id, {
           ...existing,
           ...raw,
-          id: targetId,
           url: raw.url || existing.url
         });
       } else {
-        imageMap.set(targetId, {
-          ...raw,
-          id: targetId
-        });
+        imageMap.set(raw.id, { ...raw });
       }
     }
 
     return Array.from(imageMap.values());
   };
 
-  // Safe Image Retriever by permanent unique key
+  // Safe Image Retriever by permanent unique key with aliases
   const getImageByKey = (key: string, defaultUrl?: string): string => {
     // 1. Direct match
     const direct = images.find(img => img.id === key);
@@ -271,17 +334,31 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // 2. Symmetric key aliases check
     const keyAliases: Record<string, string[]> = {
       'homepage_hero': ['img-hero', 'heroImage'],
-      'homepage_women_child': ['category_women', 'img-scheme-women', 'img-cat-women', 'img-scheme-1'],
-      'category_women': ['homepage_women_child', 'img-scheme-women', 'img-cat-women', 'img-scheme-1'],
-      'homepage_farmer': ['category_farmer', 'img-scheme-farmer', 'img-cat-farmer', 'img-scheme-2'],
-      'category_farmer': ['homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer', 'img-scheme-2'],
-      'homepage_education': ['category_education', 'img-scheme-education', 'img-cat-student', 'img-scheme-3'],
-      'category_education': ['homepage_education', 'img-scheme-education', 'img-cat-student', 'img-scheme-3'],
-      'homepage_worker': ['category_worker', 'img-scheme-worker', 'img-cat-worker'],
-      'category_worker': ['homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+      'img-hero': ['homepage_hero', 'heroImage'],
+      
+      'women_scheme': ['category_women', 'homepage_women_child', 'img-scheme-women', 'img-cat-women', 'img-scheme-1'],
+      'category_women': ['women_scheme', 'homepage_women_child', 'img-scheme-women', 'img-cat-women', 'img-scheme-1'],
+      'homepage_women_child': ['women_scheme', 'category_women', 'img-scheme-women', 'img-cat-women', 'img-scheme-1'],
+      
+      'farmer_scheme': ['category_farmer', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer', 'img-scheme-2'],
+      'category_farmer': ['farmer_scheme', 'homepage_farmer', 'img-scheme-farmer', 'img-cat-farmer', 'img-scheme-2'],
+      'homepage_farmer': ['farmer_scheme', 'category_farmer', 'img-scheme-farmer', 'img-cat-farmer', 'img-scheme-2'],
+      
+      'student_scheme': ['category_education', 'homepage_education', 'img-scheme-education', 'img-cat-student', 'img-scheme-3'],
+      'category_education': ['student_scheme', 'homepage_education', 'img-scheme-education', 'img-cat-student', 'img-scheme-3'],
+      'homepage_education': ['student_scheme', 'category_education', 'img-scheme-education', 'img-cat-student', 'img-scheme-3'],
+      
+      'worker_scheme': ['category_worker', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+      'category_worker': ['worker_scheme', 'homepage_worker', 'img-scheme-worker', 'img-cat-worker'],
+      'homepage_worker': ['worker_scheme', 'category_worker', 'img-scheme-worker', 'img-cat-worker'],
+      
+      'senior_citizen_scheme': ['category_senior_citizen', 'homepage_senior', 'img-cat-senior'],
+      'category_senior_citizen': ['senior_citizen_scheme', 'homepage_senior', 'img-cat-senior'],
+      'homepage_senior': ['senior_citizen_scheme', 'category_senior_citizen', 'img-cat-senior'],
+      
       'homepage_health': ['category_health', 'img-scheme-health', 'img-scheme-social'],
       'category_health': ['homepage_health', 'img-scheme-health', 'img-scheme-social'],
-      'category_senior_citizen': ['img-cat-senior', 'homepage_other_services'],
+      
       'homepage_other_services': ['category_other_services', 'img-doc-services', 'img-latest-1'],
       'category_other_services': ['homepage_other_services', 'img-doc-services', 'img-latest-1']
     };
