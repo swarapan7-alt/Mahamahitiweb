@@ -38,8 +38,58 @@ export const AdminSchemes: React.FC = () => {
     setTimeout(() => setNotification(''), 3000);
   };
 
+  const normalizeScheme = (raw: any): SchemeItem => {
+    if (!raw) return raw;
+    const reqDocs = Array.isArray(raw.requiredDocuments) && raw.requiredDocuments.length > 0
+      ? [...raw.requiredDocuments]
+      : (Array.isArray(raw.documentsRequired) && raw.documentsRequired.length > 0
+        ? [...raw.documentsRequired]
+        : ['']);
+
+    const elig = Array.isArray(raw.eligibility) && raw.eligibility.length > 0
+      ? [...raw.eligibility]
+      : (Array.isArray(raw.criteria) && raw.criteria.length > 0
+        ? [...raw.criteria]
+        : ['']);
+
+    const bene = Array.isArray(raw.benefits) && raw.benefits.length > 0
+      ? [...raw.benefits]
+      : [''];
+
+    const appProc = Array.isArray(raw.applicationProcess) && raw.applicationProcess.length > 0
+      ? [...raw.applicationProcess]
+      : (Array.isArray(raw.process) && raw.process.length > 0
+        ? [...raw.process]
+        : ['']);
+
+    return {
+      ...raw,
+      id: raw.id || `scheme-${Date.now()}`,
+      title: raw.title || '',
+      titleEnglish: raw.titleEnglish || '',
+      slug: raw.slug || '',
+      category: raw.category || 'महिला व बालविकास',
+      department: raw.department || 'महाराष्ट्र शासन',
+      description: raw.description || '',
+      shortDescription: raw.shortDescription || '',
+      eligibility: elig,
+      benefits: bene,
+      requiredDocuments: reqDocs,
+      documentsRequired: reqDocs,
+      applicationProcess: appProc,
+      process: appProc,
+      whereToApply: raw.whereToApply || raw.applicationWhere || 'आपले सरकार सेवा केंद्र किंवा अधिकृत ऑनलाइन पोर्टल',
+      officialSource: raw.officialSource || raw.officialSourceName || 'महाराष्ट्र शासन अधिकृत शासन निर्णय (GR)',
+      officialUrl: raw.officialUrl || 'https://maharashtra.gov.in',
+      lastVerified: raw.lastVerified || raw.lastVerifiedAt || '२०२६',
+      imageUrl: raw.imageUrl || raw.image || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+      published: raw.published !== false,
+      status: raw.status || (raw.published === false ? 'draft' : 'published')
+    };
+  };
+
   const handleStartCreate = () => {
-    const newScheme: SchemeItem = {
+    const newScheme: SchemeItem = normalizeScheme({
       id: `scheme-${Date.now()}`,
       title: '',
       titleEnglish: '',
@@ -59,7 +109,7 @@ export const AdminSchemes: React.FC = () => {
       imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
       published: true,
       status: 'published'
-    };
+    });
     setEditingScheme(newScheme);
     setIsCreating(true);
   };
@@ -70,15 +120,22 @@ export const AdminSchemes: React.FC = () => {
       return;
     }
 
+    const elig = (editingScheme.eligibility || []).filter(x => x && x.trim().length > 0);
+    const bene = (editingScheme.benefits || []).filter(x => x && x.trim().length > 0);
+    const docs = (editingScheme.requiredDocuments || editingScheme.documentsRequired || []).filter(x => x && x.trim().length > 0);
+    const proc = (editingScheme.applicationProcess || editingScheme.process || []).filter(x => x && x.trim().length > 0);
+
     const cleaned: SchemeItem = {
       ...editingScheme,
       published: status === 'published',
       status: status,
       slug: editingScheme.slug || editingScheme.title.toLowerCase().replace(/[^a-zA-Z0-9\u0900-\u097F]/g, '-'),
-      eligibility: editingScheme.eligibility.filter(x => x && x.trim().length > 0),
-      benefits: editingScheme.benefits.filter(x => x && x.trim().length > 0),
-      requiredDocuments: editingScheme.requiredDocuments.filter(x => x && x.trim().length > 0),
-      applicationProcess: editingScheme.applicationProcess.filter(x => x && x.trim().length > 0)
+      eligibility: elig.length > 0 ? elig : ['पात्र नागरिकांसाठी उपलब्ध'],
+      benefits: bene.length > 0 ? bene : ['शासकीय नियमांनुसार आर्थिक/कल्याणकारी सहाय्य'],
+      requiredDocuments: docs.length > 0 ? docs : ['आधार कार्ड', 'रहिवासी पुरावा'],
+      documentsRequired: docs.length > 0 ? docs : ['आधार कार्ड', 'रहिवासी पुरावा'],
+      applicationProcess: proc.length > 0 ? proc : ['अधिकृत पोर्टलवरून ऑनलाइन अर्ज करा'],
+      process: proc.length > 0 ? proc : ['अधिकृत पोर्टलवरून ऑनलाइन अर्ज करा']
     };
 
     await saveScheme(cleaned);
@@ -224,7 +281,7 @@ export const AdminSchemes: React.FC = () => {
                       <td className="py-3.5 px-4 font-bold text-[#201A30] max-w-sm">
                         <div className="flex items-center gap-3">
                           <img
-                            src={scheme.imageUrl}
+                            src={scheme.imageUrl || scheme.image || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80'}
                             alt=""
                             className="w-9 h-9 rounded-lg object-cover shrink-0 border border-[#EDEBF0]"
                             referrerPolicy="no-referrer"
@@ -232,7 +289,7 @@ export const AdminSchemes: React.FC = () => {
                           <div className="truncate">
                             <span className="block truncate text-xs">{scheme.title}</span>
                             <span className="text-[10px] text-[#6E6A82] font-normal truncate block">
-                              {scheme.benefits[0] || 'नागरिक कल्याण'}
+                              {(scheme.benefits && scheme.benefits[0]) || scheme.shortDescription || 'नागरिक कल्याण'}
                             </span>
                           </div>
                         </div>
@@ -244,12 +301,12 @@ export const AdminSchemes: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4 text-[#464255] max-w-xs truncate">
                         <a href={scheme.officialUrl} target="_blank" rel="noreferrer" className="hover:text-[#5B45B8] inline-flex items-center gap-1">
-                          <span className="truncate">{scheme.officialSource || 'अधिकृत पोर्टल'}</span>
+                          <span className="truncate">{scheme.officialSource || scheme.officialSourceName || 'अधिकृत पोर्टल'}</span>
                           <ExternalLink className="w-3 h-3 shrink-0" />
                         </a>
                       </td>
                       <td className="py-3.5 px-4 text-[#6E6A82]">
-                        {scheme.lastVerified || '२०२६'}
+                        {scheme.lastVerified || scheme.lastVerifiedAt || '२०२६'}
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         <button
@@ -267,26 +324,29 @@ export const AdminSchemes: React.FC = () => {
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            onClick={() => setPreviewScheme(scheme)}
+                            type="button"
+                            onClick={() => setPreviewScheme(normalizeScheme(scheme))}
                             className="p-1.5 rounded-lg text-[#6E6A82] hover:bg-[#F6F3FF] hover:text-[#5B45B8] transition cursor-pointer"
-                            title="Preview"
+                            title="Preview (पहा)"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
-                              setEditingScheme({ ...scheme });
+                              setEditingScheme(normalizeScheme(scheme));
                               setIsCreating(false);
                             }}
                             className="p-1.5 rounded-lg text-[#6E6A82] hover:bg-[#F6F3FF] hover:text-[#5B45B8] transition cursor-pointer"
-                            title="Edit"
+                            title="Edit (संपादित करा)"
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleDelete(scheme.id, scheme.title)}
                             className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition cursor-pointer"
-                            title="Delete"
+                            title="Delete (हटवा)"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -633,35 +693,86 @@ export const AdminSchemes: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#EDEBF0]">
-              <span className="text-xs font-bold text-[#5B45B8]">योजना प्रिव्ह्यू</span>
-              <button onClick={() => setPreviewScheme(null)} className="text-xs font-bold">✕ बंद करा</button>
+              <span className="text-xs font-bold text-[#5B45B8]">योजना माहिती प्रिव्ह्यू (Scheme Preview)</span>
+              <button 
+                type="button" 
+                onClick={() => setPreviewScheme(null)} 
+                className="text-xs font-bold text-[#6E6A82] hover:text-[#201A30] cursor-pointer"
+              >
+                ✕ बंद करा
+              </button>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="text-lg font-bold text-[#201A30]">{previewScheme.title}</h3>
-              <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#F6F3FF] text-[#5B45B8] text-xs font-bold">
-                {previewScheme.category}
-              </span>
-              <p className="text-xs text-[#464255] leading-relaxed">{previewScheme.description}</p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <img
+                  src={previewScheme.imageUrl || previewScheme.image || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80'}
+                  alt=""
+                  className="w-20 h-20 rounded-xl object-cover border border-[#EDEBF0] shrink-0"
+                />
+                <div className="space-y-1">
+                  <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#F6F3FF] text-[#5B45B8] text-xs font-bold border border-[#DDD6FE]">
+                    {previewScheme.category}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-bold text-[#201A30]">{previewScheme.title}</h3>
+                  <p className="text-[11px] text-[#6E6A82]">{previewScheme.department || 'महाराष्ट्र शासन'}</p>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#464255] leading-relaxed bg-[#FAF9F5] p-3 rounded-xl border border-[#EDEBF0]">
+                {previewScheme.description || previewScheme.shortDescription || 'माहिती उपलब्ध नाही'}
+              </p>
               
-              <div className="p-3 bg-[#FAF9F5] rounded-xl text-xs space-y-2">
-                <div className="font-bold text-[#201A30]">पात्रतेच्या अटी:</div>
-                <ul className="list-disc list-inside space-y-1 text-[#464255]">
-                  {previewScheme.eligibility.map((e, i) => <li key={i}>{e}</li>)}
+              {/* Eligibility */}
+              <div className="p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs space-y-1.5">
+                <div className="font-bold text-[#166534]">पात्रतेच्या अटी:</div>
+                <ul className="list-disc list-inside space-y-1 text-[#14532D]">
+                  {(previewScheme.eligibility || []).length > 0 ? (
+                    (previewScheme.eligibility || []).map((e, i) => <li key={i}>{e}</li>)
+                  ) : (
+                    <li>पात्र नागरिकांसाठी उपलब्ध</li>
+                  )}
                 </ul>
               </div>
 
-              <div className="p-3 bg-[#FAF9F5] rounded-xl text-xs space-y-2">
-                <div className="font-bold text-[#201A30]">आवश्यक कागदपत्रे:</div>
-                <ul className="list-disc list-inside space-y-1 text-[#464255]">
-                  {previewScheme.requiredDocuments.map((d, i) => <li key={i}>{d}</li>)}
+              {/* Benefits */}
+              <div className="p-3.5 bg-[#F6F3FF] border border-[#DDD6FE] rounded-xl text-xs space-y-1.5">
+                <div className="font-bold text-[#5B45B8]">मिळणारे लाभ:</div>
+                <ul className="list-disc list-inside space-y-1 text-[#4338CA]">
+                  {(previewScheme.benefits || []).length > 0 ? (
+                    (previewScheme.benefits || []).map((b, i) => <li key={i}>{b}</li>)
+                  ) : (
+                    <li>शासकीय नियमांनुसार आर्थिक/कल्याणकारी सहाय्य</li>
+                  )}
                 </ul>
+              </div>
+
+              {/* Documents */}
+              <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl text-xs space-y-1.5">
+                <div className="font-bold text-[#92400E]">आवश्यक कागदपत्रे:</div>
+                <ul className="list-disc list-inside space-y-1 text-[#78350F]">
+                  {(previewScheme.requiredDocuments || previewScheme.documentsRequired || []).length > 0 ? (
+                    (previewScheme.requiredDocuments || previewScheme.documentsRequired || []).map((d, i) => <li key={i}>{d}</li>)
+                  ) : (
+                    <li>आधार कार्ड, रहिवासी पुरावा</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Application Details */}
+              <div className="text-xs text-[#6E6A82] space-y-1 pt-1">
+                <div><strong className="text-[#201A30]">अर्ज कुठे करावा:</strong> {previewScheme.whereToApply || previewScheme.applicationWhere || 'आपले सरकार पोर्टल / सेवा केंद्र'}</div>
+                <div><strong className="text-[#201A30]">अधिकृत स्त्रोत:</strong> {previewScheme.officialSource || previewScheme.officialSourceName || 'महाराष्ट्र शासन अधिकृत शासन निर्णय (GR)'}</div>
               </div>
             </div>
 
-            <div className="flex justify-end pt-3">
-              <button onClick={() => setPreviewScheme(null)} className="px-4 py-2 bg-[#5B45B8] text-white text-xs font-bold rounded-xl">
-                ठीक आहे
+            <div className="flex justify-end pt-3 border-t border-[#EDEBF0]">
+              <button 
+                type="button" 
+                onClick={() => setPreviewScheme(null)} 
+                className="px-5 py-2 bg-[#5B45B8] hover:bg-[#4D39A2] text-white text-xs font-bold rounded-xl cursor-pointer transition"
+              >
+                ठीक आहे (Close)
               </button>
             </div>
           </div>

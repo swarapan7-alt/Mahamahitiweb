@@ -49,6 +49,14 @@ interface AdminStore {
   customFaqs?: any[];
   customImages?: any[];
   settings?: any;
+  visitorAnalytics?: {
+    totalUniqueVisitors: number;
+    totalPageViews: number;
+    allTimeVisitorIds: string[];
+    dailyVisitors: { [dateStr: string]: string[] };
+    monthlyVisitors: { [monthStr: string]: string[] };
+    dailyPageViews: { [dateStr: string]: number };
+  };
   visitorStats?: {
     total: number;
     today: number;
@@ -60,6 +68,51 @@ interface AdminStore {
   };
 }
 
+// IST Date Helper Function
+function getISTDateStrings() {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Asia/Kolkata', 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  });
+  const todayStr = formatter.format(now); // "YYYY-MM-DD"
+  const monthStr = todayStr.substring(0, 7); // "YYYY-MM"
+
+  // Yesterday date in IST
+  const yesterdayDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const yesterdayStr = formatter.format(yesterdayDate);
+
+  return { todayStr, monthStr, yesterdayStr };
+}
+
+function ensureAnalytics(store: AdminStore): NonNullable<AdminStore['visitorAnalytics']> {
+  if (!store.visitorAnalytics || typeof store.visitorAnalytics !== 'object') {
+    store.visitorAnalytics = {
+      totalUniqueVisitors: 0,
+      totalPageViews: 0,
+      allTimeVisitorIds: [],
+      dailyVisitors: {},
+      monthlyVisitors: {},
+      dailyPageViews: {}
+    };
+  }
+  if (!Array.isArray(store.visitorAnalytics.allTimeVisitorIds)) {
+    store.visitorAnalytics.allTimeVisitorIds = [];
+  }
+  if (!store.visitorAnalytics.dailyVisitors || typeof store.visitorAnalytics.dailyVisitors !== 'object') {
+    store.visitorAnalytics.dailyVisitors = {};
+  }
+  if (!store.visitorAnalytics.monthlyVisitors || typeof store.visitorAnalytics.monthlyVisitors !== 'object') {
+    store.visitorAnalytics.monthlyVisitors = {};
+  }
+  if (!store.visitorAnalytics.dailyPageViews || typeof store.visitorAnalytics.dailyPageViews !== 'object') {
+    store.visitorAnalytics.dailyPageViews = {};
+  }
+  return store.visitorAnalytics;
+}
+
 const DEFAULT_SALT = "mahamahiti_secure_salt_2026";
 // Initial credentials: Admin / Sangli@123
 const DEFAULT_STORE: AdminStore = {
@@ -68,14 +121,13 @@ const DEFAULT_STORE: AdminStore = {
   passwordHash: hashPassword("Sangli@123", DEFAULT_SALT),
   isFirstLogin: true,
   activeSessions: {},
-  visitorStats: {
-    total: 125480,
-    today: 342,
-    yesterday: 890,
-    month: 8745,
-    pageViews: 382900,
-    lastDate: new Date().toISOString().split('T')[0],
-    lastMonth: new Date().toISOString().slice(0, 7)
+  visitorAnalytics: {
+    totalUniqueVisitors: 0,
+    totalPageViews: 0,
+    allTimeVisitorIds: [],
+    dailyVisitors: {},
+    monthlyVisitors: {},
+    dailyPageViews: {}
   },
   settings: {
     websiteName: "महामाहिती",
@@ -301,94 +353,95 @@ async function startServer() {
   });
 
   // -----------------------------------------------------------
-  // VISITOR COUNTER & TRACKING ROUTES
+  // VISITOR COUNTER & TRACKING ROUTES (GENUINE PERSISTENT TRACKING)
   // -----------------------------------------------------------
   app.get("/api/visitors/stats", (req, res) => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const monthStr = new Date().toISOString().slice(0, 7);
+    const { todayStr, monthStr, yesterdayStr } = getISTDateStrings();
+    const analytics = ensureAnalytics(adminStore);
 
-    if (!adminStore.visitorStats) {
-      adminStore.visitorStats = {
-        total: 125480,
-        today: 342,
-        yesterday: 890,
-        month: 8745,
-        pageViews: 382900,
-        lastDate: todayStr,
-        lastMonth: monthStr
-      };
-    }
-
-    // Daily reset check
-    if (adminStore.visitorStats.lastDate !== todayStr) {
-      adminStore.visitorStats.yesterday = adminStore.visitorStats.today || 890;
-      adminStore.visitorStats.today = 12;
-      adminStore.visitorStats.lastDate = todayStr;
-    }
-    // Monthly reset check
-    if (adminStore.visitorStats.lastMonth !== monthStr) {
-      adminStore.visitorStats.month = adminStore.visitorStats.today;
-      adminStore.visitorStats.lastMonth = monthStr;
-    }
-
-    // Increment overall pageViews on request
-    adminStore.visitorStats.pageViews = (adminStore.visitorStats.pageViews || 382900) + 1;
+    const total = analytics.allTimeVisitorIds.length;
+    const today = (analytics.dailyVisitors[todayStr] || []).length;
+    const yesterday = (analytics.dailyVisitors[yesterdayStr] || []).length;
+    const month = (analytics.monthlyVisitors[monthStr] || []).length;
+    const pageViews = analytics.totalPageViews || 0;
 
     res.json({
       success: true,
       stats: {
-        total: adminStore.visitorStats.total,
-        today: adminStore.visitorStats.today,
-        yesterday: adminStore.visitorStats.yesterday || 890,
-        month: adminStore.visitorStats.month,
-        pageViews: adminStore.visitorStats.pageViews
+        total,
+        today,
+        yesterday,
+        month,
+        pageViews
       }
     });
   });
 
   app.post("/api/visitors/track", (req, res) => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const monthStr = new Date().toISOString().slice(0, 7);
+    const { todayStr, monthStr, yesterdayStr } = getISTDateStrings();
+    const analytics = ensureAnalytics(adminStore);
 
-    if (!adminStore.visitorStats) {
-      adminStore.visitorStats = {
-        total: 125480,
-        today: 342,
-        yesterday: 890,
-        month: 8745,
-        pageViews: 382900,
-        lastDate: todayStr,
-        lastMonth: monthStr
-      };
+    let visitorId = req.body?.visitorId;
+    if (!visitorId || typeof visitorId !== 'string' || visitorId.trim().length === 0) {
+      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+      const ua = req.headers['user-agent'] || 'unknown';
+      visitorId = crypto.createHash('sha256').update(`${ip}-${ua}`).digest('hex').substring(0, 16);
+    } else {
+      visitorId = visitorId.trim().substring(0, 64);
     }
 
-    // Daily rollover
-    if (adminStore.visitorStats.lastDate !== todayStr) {
-      adminStore.visitorStats.yesterday = adminStore.visitorStats.today || 890;
-      adminStore.visitorStats.today = 0;
-      adminStore.visitorStats.lastDate = todayStr;
-    }
-    // Monthly rollover
-    if (adminStore.visitorStats.lastMonth !== monthStr) {
-      adminStore.visitorStats.month = 0;
-      adminStore.visitorStats.lastMonth = monthStr;
+    // 1. Increment Page Views
+    analytics.totalPageViews = (analytics.totalPageViews || 0) + 1;
+    analytics.dailyPageViews[todayStr] = (analytics.dailyPageViews[todayStr] || 0) + 1;
+
+    // 2. Track Unique Visitor All-Time
+    if (!analytics.allTimeVisitorIds.includes(visitorId)) {
+      analytics.allTimeVisitorIds.push(visitorId);
+      analytics.totalUniqueVisitors = analytics.allTimeVisitorIds.length;
     }
 
-    adminStore.visitorStats.total += 1;
-    adminStore.visitorStats.today += 1;
-    adminStore.visitorStats.month += 1;
-    adminStore.visitorStats.pageViews = (adminStore.visitorStats.pageViews || 382900) + 2;
+    // 3. Track Unique Visitor Daily
+    if (!analytics.dailyVisitors[todayStr]) {
+      analytics.dailyVisitors[todayStr] = [];
+    }
+    if (!analytics.dailyVisitors[todayStr].includes(visitorId)) {
+      analytics.dailyVisitors[todayStr].push(visitorId);
+    }
+
+    // 4. Track Unique Visitor Monthly
+    if (!analytics.monthlyVisitors[monthStr]) {
+      analytics.monthlyVisitors[monthStr] = [];
+    }
+    if (!analytics.monthlyVisitors[monthStr].includes(visitorId)) {
+      analytics.monthlyVisitors[monthStr].push(visitorId);
+    }
+
+    // Trim old daily logs if exceeding 90 days to keep file size lightweight
+    const dateKeys = Object.keys(analytics.dailyVisitors);
+    if (dateKeys.length > 90) {
+      dateKeys.sort().slice(0, dateKeys.length - 90).forEach(oldKey => {
+        delete analytics.dailyVisitors[oldKey];
+        delete analytics.dailyPageViews[oldKey];
+      });
+    }
 
     saveAdminStore(adminStore);
 
+    const total = analytics.allTimeVisitorIds.length;
+    const today = (analytics.dailyVisitors[todayStr] || []).length;
+    const yesterday = (analytics.dailyVisitors[yesterdayStr] || []).length;
+    const month = (analytics.monthlyVisitors[monthStr] || []).length;
+    const pageViews = analytics.totalPageViews;
+
     res.json({
       success: true,
+      visitorId,
       stats: {
-        total: adminStore.visitorStats.total,
-        today: adminStore.visitorStats.today,
-        yesterday: adminStore.visitorStats.yesterday || 890,
-        month: adminStore.visitorStats.month,
-        pageViews: adminStore.visitorStats.pageViews
+        total,
+        today,
+        yesterday,
+        month,
+        pageViews
       }
     });
   });

@@ -28,8 +28,50 @@ export const AdminServices: React.FC = () => {
     setTimeout(() => setNotification(''), 3000);
   };
 
+  const normalizeService = (raw: any): GovernmentService => {
+    if (!raw) return raw;
+    const feats = Array.isArray(raw.features) && raw.features.length > 0
+      ? [...raw.features]
+      : (Array.isArray(raw.keyBenefits) && raw.keyBenefits.length > 0
+        ? [...raw.keyBenefits]
+        : ['']);
+
+    const docs = Array.isArray(raw.requiredDocuments) && raw.requiredDocuments.length > 0
+      ? [...raw.requiredDocuments]
+      : (Array.isArray(raw.documentsRequired) && raw.documentsRequired.length > 0
+        ? [...raw.documentsRequired]
+        : ['']);
+
+    const access = Array.isArray(raw.howToAccess) && raw.howToAccess.length > 0
+      ? [...raw.howToAccess]
+      : (Array.isArray(raw.steps) && raw.steps.length > 0
+        ? [...raw.steps]
+        : ['']);
+
+    return {
+      ...raw,
+      id: raw.id || `service-${Date.now()}`,
+      title: raw.title || '',
+      titleEnglish: raw.titleEnglish || '',
+      slug: raw.slug || '',
+      category: raw.category || 'डिजिटल सेवा',
+      department: raw.department || 'महाराष्ट्र शासन / भारत सरकार',
+      description: raw.description || '',
+      targetAudience: raw.targetAudience || 'महाराष्ट्रातील सर्व पात्र नागरिक',
+      features: feats,
+      requiredDocuments: docs,
+      howToAccess: access,
+      portalUrl: raw.portalUrl || raw.officialUrl || 'https://aaplesarkar.mahaonline.gov.in',
+      officialUrl: raw.officialUrl || raw.portalUrl || 'https://aaplesarkar.mahaonline.gov.in',
+      lastVerified: raw.lastVerified || '२०२६',
+      imageUrl: raw.imageUrl || raw.image || 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
+      published: raw.published !== false,
+      status: raw.status || (raw.published === false ? 'draft' : 'published')
+    };
+  };
+
   const handleStartCreate = () => {
-    const newService: GovernmentService = {
+    const newService: GovernmentService = normalizeService({
       id: `service-${Date.now()}`,
       title: '',
       titleEnglish: '',
@@ -47,7 +89,7 @@ export const AdminServices: React.FC = () => {
       imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
       published: true,
       status: 'published'
-    };
+    });
     setEditingService(newService);
     setIsCreating(true);
   };
@@ -58,14 +100,18 @@ export const AdminServices: React.FC = () => {
       return;
     }
 
+    const feats = (editingService.features || []).filter(x => x && x.trim().length > 0);
+    const docs = (editingService.requiredDocuments || []).filter(x => x && x.trim().length > 0);
+    const access = (editingService.howToAccess || []).filter(x => x && x.trim().length > 0);
+
     const cleaned: GovernmentService = {
       ...editingService,
       published: status === 'published',
       status: status,
       slug: editingService.slug || editingService.title.toLowerCase().replace(/[^a-zA-Z0-9\u0900-\u097F]/g, '-'),
-      features: editingService.features.filter(x => x && x.trim().length > 0),
-      requiredDocuments: (editingService.requiredDocuments || []).filter(x => x && x.trim().length > 0),
-      howToAccess: editingService.howToAccess.filter(x => x && x.trim().length > 0)
+      features: feats.length > 0 ? feats : ['ऑनलाइन शासकीय सुविधा'],
+      requiredDocuments: docs.length > 0 ? docs : ['आधार कार्ड'],
+      howToAccess: access.length > 0 ? access : ['अधिकृत पोर्टलवरून ऑनलाइन वापर करा']
     };
 
     await saveService(cleaned);
@@ -188,8 +234,9 @@ export const AdminServices: React.FC = () => {
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
+                            type="button"
                             onClick={() => {
-                              setEditingService({ ...srv });
+                              setEditingService(normalizeService(srv));
                               setIsCreating(false);
                             }}
                             className="p-1.5 rounded-lg text-[#6E6A82] hover:bg-[#F6F3FF] hover:text-[#5B45B8] transition cursor-pointer"

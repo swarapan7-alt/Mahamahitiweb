@@ -7,18 +7,13 @@ import {
   Eye,
   Activity
 } from 'lucide-react';
-
-interface VisitorStats {
-  total: number;
-  today: number;
-  month: number;
-}
+import { trackPageView, getVisitorStats, VisitorStats } from '../utils/analytics';
 
 export const VisitorCounter: React.FC = () => {
   const [stats, setStats] = useState<VisitorStats>({
-    total: 125480,
-    today: 342,
-    month: 8745
+    total: 0,
+    today: 0,
+    month: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -28,24 +23,19 @@ export const VisitorCounter: React.FC = () => {
     const fetchAndTrack = async () => {
       try {
         const hasTrackedInSession = sessionStorage.getItem('mahamahiti_visit_tracked');
-        let endpoint = '/api/visitors/stats';
-        let method = 'GET';
+        let newStats: VisitorStats | null = null;
 
         if (!hasTrackedInSession) {
-          endpoint = '/api/visitors/track';
-          method = 'POST';
+          newStats = await trackPageView();
           sessionStorage.setItem('mahamahiti_visit_tracked', 'true');
+        } else {
+          newStats = await getVisitorStats();
         }
 
-        const res = await fetch(endpoint, { method });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.stats && isMounted) {
-            setStats(data.stats);
-          }
+        if (newStats && isMounted) {
+          setStats(newStats);
         }
       } catch (err) {
-        // Fallback gracefully to default state
         console.warn('Visitor counter fetch note:', err);
       } finally {
         if (isMounted) setLoading(false);
@@ -61,7 +51,7 @@ export const VisitorCounter: React.FC = () => {
 
   // Format number with Indian numbering system (e.g. 1,25,480)
   const formatCount = (num: number) => {
-    return num.toLocaleString('en-IN');
+    return (num || 0).toLocaleString('en-IN');
   };
 
   return (

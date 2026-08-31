@@ -27,11 +27,11 @@ interface AdminDashboardProps {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) => {
   const { schemes, documents, services, updates, images, homepageConfig } = useAdminAuth();
   const [visitorStats, setVisitorStats] = useState<{ total: number; today: number; yesterday?: number; month: number; pageViews?: number }>({
-    total: 125480,
-    today: 342,
-    yesterday: 890,
-    month: 8745,
-    pageViews: 382400
+    total: 0,
+    today: 0,
+    yesterday: 0,
+    month: 0,
+    pageViews: 0
   });
   const [loadingStats, setLoadingStats] = useState(false);
 
@@ -244,7 +244,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               <Activity className="w-3.5 h-3.5" /> कालच्या भेटी
             </span>
             <div className="text-xl sm:text-2xl font-bold text-[#201A30] mt-1 font-heading">
-              {(visitorStats.yesterday || 890).toLocaleString('en-IN')}
+              {(visitorStats.yesterday || 0).toLocaleString('en-IN')}
             </div>
             <p className="text-[11px] text-[#6E6A82] mt-1">Yesterday's Visits</p>
           </div>
@@ -254,7 +254,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               <TrendingUp className="w-3.5 h-3.5" /> या महिन्यातील भेटी
             </span>
             <div className="text-xl sm:text-2xl font-bold text-[#201A30] mt-1 font-heading">
-              {visitorStats.month.toLocaleString('en-IN')}
+              {(visitorStats.month || 0).toLocaleString('en-IN')}
             </div>
             <p className="text-[11px] text-[#6E6A82] mt-1">This Month</p>
           </div>
@@ -264,7 +264,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               <Layers className="w-3.5 h-3.5" /> Page Views
             </span>
             <div className="text-xl sm:text-2xl font-bold text-[#201A30] mt-1 font-heading">
-              {(visitorStats.pageViews || 382400).toLocaleString('en-IN')}
+              {(visitorStats.pageViews || 0).toLocaleString('en-IN')}
             </div>
             <p className="text-[11px] text-[#6E6A82] mt-1">Total Pageviews</p>
           </div>

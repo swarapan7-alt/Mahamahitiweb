@@ -27,8 +27,45 @@ export const AdminDocuments: React.FC = () => {
     setTimeout(() => setNotification(''), 3000);
   };
 
+  const normalizeDoc = (raw: any): DocumentItem => {
+    if (!raw) return raw;
+    const reqDocs = Array.isArray(raw.requiredSupportingDocs) && raw.requiredSupportingDocs.length > 0
+      ? [...raw.requiredSupportingDocs]
+      : (Array.isArray(raw.requiredDocs) && raw.requiredDocs.length > 0
+        ? [...raw.requiredDocs]
+        : ['']);
+
+    const steps = Array.isArray(raw.applicationSteps) && raw.applicationSteps.length > 0
+      ? [...raw.applicationSteps]
+      : (Array.isArray(raw.processSteps) && raw.processSteps.length > 0
+        ? [...raw.processSteps]
+        : ['']);
+
+    return {
+      ...raw,
+      id: raw.id || `doc-${Date.now()}`,
+      title: raw.title || '',
+      titleEnglish: raw.titleEnglish || '',
+      slug: raw.slug || '',
+      category: raw.category || 'महसूल विभाग',
+      issuingAuthority: raw.issuingAuthority || 'तहसीलदार कार्यालय / महसूल विभाग',
+      description: raw.description || '',
+      requiredSupportingDocs: reqDocs,
+      requiredDocs: reqDocs,
+      applicationSteps: steps,
+      processSteps: steps,
+      whereToApply: raw.whereToApply || 'आपले सरकार सेवा केंद्र किंवा aaplesarkar.mahaonline.gov.in',
+      officialPortal: raw.officialPortal || 'आपले सरकार पोर्टल',
+      officialUrl: raw.officialUrl || 'https://aaplesarkar.mahaonline.gov.in',
+      validityPeriod: raw.validityPeriod || '१ वर्ष किंवा ३ वर्षे',
+      lastVerified: raw.lastVerified || '२०२६',
+      published: raw.published !== false,
+      status: raw.status || (raw.published === false ? 'draft' : 'published')
+    };
+  };
+
   const handleStartCreate = () => {
-    const newDoc: DocumentItem = {
+    const newDoc: DocumentItem = normalizeDoc({
       id: `doc-${Date.now()}`,
       title: '',
       titleEnglish: '',
@@ -45,7 +82,7 @@ export const AdminDocuments: React.FC = () => {
       lastVerified: '२०२६',
       published: true,
       status: 'published'
-    };
+    });
     setEditingDoc(newDoc);
     setIsCreating(true);
   };
@@ -56,13 +93,18 @@ export const AdminDocuments: React.FC = () => {
       return;
     }
 
+    const docs = (editingDoc.requiredSupportingDocs || editingDoc.requiredDocs || []).filter(x => x && x.trim().length > 0);
+    const steps = (editingDoc.applicationSteps || editingDoc.processSteps || []).filter(x => x && x.trim().length > 0);
+
     const cleaned: DocumentItem = {
       ...editingDoc,
       published: status === 'published',
       status: status,
       slug: editingDoc.slug || editingDoc.title.toLowerCase().replace(/[^a-zA-Z0-9\u0900-\u097F]/g, '-'),
-      requiredSupportingDocs: editingDoc.requiredSupportingDocs.filter(x => x && x.trim().length > 0),
-      applicationSteps: editingDoc.applicationSteps.filter(x => x && x.trim().length > 0)
+      requiredSupportingDocs: docs.length > 0 ? docs : ['आधार कार्ड', 'रहिवासी पुरावा'],
+      requiredDocs: docs.length > 0 ? docs : ['आधार कार्ड', 'रहिवासी पुरावा'],
+      applicationSteps: steps.length > 0 ? steps : ['अधिकृत पोर्टलवर ऑनलाइन अर्ज सादर करा'],
+      processSteps: steps.length > 0 ? steps : ['अधिकृत पोर्टलवर ऑनलाइन अर्ज सादर करा']
     };
 
     await saveDocument(cleaned);
@@ -182,8 +224,9 @@ export const AdminDocuments: React.FC = () => {
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
+                            type="button"
                             onClick={() => {
-                              setEditingDoc({ ...doc });
+                              setEditingDoc(normalizeDoc(doc));
                               setIsCreating(false);
                             }}
                             className="p-1.5 rounded-lg text-[#6E6A82] hover:bg-[#F6F3FF] hover:text-[#5B45B8] transition cursor-pointer"
